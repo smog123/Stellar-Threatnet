@@ -1,0 +1,23 @@
+[package]
+name = "soroban_threatnet"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+soroban-sdk = "27.0.5"
+
+[dev-dependencies]
+soroban-sdk = { version = "27.0.5", features = ["testutils"] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = false
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1

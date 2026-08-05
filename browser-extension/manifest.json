@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Stellar ThreatNet — Phishing Guard",
+  "version": "0.1.0",
+  "description": "Warns you before visiting known phishing websites targeting the Stellar ecosystem (fake wallets, fake exchanges, fake airdrops).",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["http://localhost:8000/*", "https://api.stellar-threatnet.org/*"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content.js"],
+      "css": ["src/warning.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "Stellar ThreatNet"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

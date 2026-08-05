@@ -1,0 +1,18 @@
+{
+  "name": "@stellar-threatnet/sdk",
+  "version": "0.1.0",
+  "description": "Official TypeScript SDK for the Stellar ThreatNet threat intelligence API",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["stellar", "threat", "intelligence", "security", "phishing"],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

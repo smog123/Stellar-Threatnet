@@ -1,0 +1,89 @@
+#tn-warning-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+}
+
+#tn-warning-banner[data-level="block"] .tn-banner-inner {
+  background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  border-bottom: 2px solid #ef4444;
+}
+
+#tn-warning-banner[data-level="warn"] .tn-banner-inner {
+  background: linear-gradient(135deg, #78350f, #92400e);
+  border-bottom: 2px solid #f59e0b;
+}
+
+.tn-banner-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 20px;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.tn-icon {
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.tn-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.tn-title {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.tn-detail {
+  font-size: 12px;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+.tn-reason {
+  font-size: 12px;
+  opacity: 0.75;
+  margin-top: 4px;
+}
+
+.tn-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.tn-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tn-btn-danger {
+  background: #fff;
+  color: #7f1d1d;
+}
+
+.tn-btn-danger:hover {
+  background: #fee2e2;
+}
+
+.tn-btn-ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.tn-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.15);
+}

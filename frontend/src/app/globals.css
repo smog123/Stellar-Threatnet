@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-threat-bg text-slate-200 antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 110%, rgba(244, 63, 94, 0.05), transparent);
+  background-attachment: fixed;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0d1424;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2942;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2b3d63;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-xl border border-threat-border bg-threat-panel/70 backdrop-blur-sm;
+  }
+  .panel-hover {
+    @apply transition-all duration-200 hover:border-threat-accent/40 hover:shadow-glow;
+  }
+  .label {
+    @apply text-[11px] font-semibold uppercase tracking-widest text-slate-500;
+  }
+  .input {
+    @apply w-full rounded-lg border border-threat-border bg-threat-bg px-3.5 py-2.5 text-sm text-slate-200
+      placeholder-slate-500 outline-none transition focus:border-threat-accent/60 focus:ring-2 focus:ring-threat-accent/20;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-threat-accent px-4 py-2.5 text-sm
+      font-semibold text-slate-950 transition hover:bg-cyan-300 hover:shadow-glow active:scale-[0.98];
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-threat-border px-4 py-2.5
+      text-sm font-medium text-slate-300 transition hover:border-threat-accent/50 hover:text-white active:scale-[0.98];
+  }
+  .mono {
+    @apply font-mono text-[13px];
+  }
+}

@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a reproducible bug
+title: "[Bug]: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for taking the time to fill out this bug report! If this is a **security** vulnerability, do NOT open an issue — email security@stellar-threatnet.org."
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      description: backend | frontend | cli | sdks | browser-extension | contract
+      placeholder: e.g. backend
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start backend with `uvicorn app.main:app`
+        2. Call `GET /api/v1/lookup/wallet/...`
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: OS, Python/Node/Rust versions, Docker version, commit hash
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or error output
+      render: shell

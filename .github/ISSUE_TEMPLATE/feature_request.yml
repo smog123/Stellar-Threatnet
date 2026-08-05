@@ -1,0 +1,34 @@
+name: Feature request
+description: Propose a new capability or improvement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: "Suggest an idea for Stellar ThreatNet. For larger structural changes, consider a TNIP (see docs/GOVERNANCE.md)."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What gap does this fill for the Stellar ecosystem?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should it work? Include API sketches, UI mocks, or links.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This affects the reputation scoring or moderation model
+        - label: This is a breaking API change
+        - label: I can contribute a first implementation

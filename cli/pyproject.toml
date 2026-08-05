@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stellar-threatnet-cli"
+version = "0.1.0"
+description = "CLI for the Stellar ThreatNet open threat intelligence platform"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "click>=8.1",
+    "httpx>=0.25",
+]
+
+[project.scripts]
+threatnet = "stellar_threatnet_cli.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["stellar_threatnet_cli*"]
