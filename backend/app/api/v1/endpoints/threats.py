@@ -27,6 +27,7 @@ from app.schemas.threats import (
     ReportCreate,
     ReportOut,
     SearchResults,
+    SocOverviewResponse,
     TokenLookupResponse,
     VoteRequest,
     WalletLookupResponse,
@@ -180,6 +181,18 @@ async def download_feed(request: Request, db: AsyncSession = Depends(get_db)):
 async def get_global_statistics(db: AsyncSession = Depends(get_db)):
     """Aggregate dashboard metrics: threats by type, incidents, pending reports."""
     return await ThreatService.get_stats(db)
+
+
+@router.get(
+    "/stats/overview",
+    response_model=SocOverviewResponse,
+    summary="Security Operations Center overview",
+)
+@limiter.limit("60/minute")
+async def soc_overview(request: Request, db: AsyncSession = Depends(get_db)):
+    """Single-payload SOC dashboard: network posture, threat landscape, active campaigns,
+    latest threats, and recent community reports."""
+    return await ThreatService.get_soc_overview(db)
 
 
 @router.get("/search", response_model=SearchResults, summary="Search across entities")

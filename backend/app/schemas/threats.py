@@ -226,3 +226,43 @@ class PaginatedIncidents(BaseModel):
     offset: int
     limit: int
     items: List[IncidentResponse]
+
+
+# --------------------------------------------------------------------------- #
+# Security Operations Center (SOC) overview
+# --------------------------------------------------------------------------- #
+class StatusCounts(BaseModel):
+    confirmed_malicious: int = 0
+    suspicious: int = 0
+    under_investigation: int = 0
+    trusted: int = 0
+
+
+class ThreatLandscape(BaseModel):
+    wallets: StatusCounts
+    domains: StatusCounts
+    tokens: StatusCounts
+
+
+class ModuleStats(BaseModel):
+    """Per-module counters for modules landing in later phases (anchors, scanner, SEP)."""
+    anchors: int = 0
+    soroban_scans: int = 0
+    sep_validations: int = 0
+
+
+class NetworkStatusOut(BaseModel):
+    level: str  # normal | elevated | high
+    label: str
+    summary: str
+
+
+class SocOverviewResponse(BaseModel):
+    generated_at: datetime
+    network_status: NetworkStatusOut
+    landscape: ThreatLandscape
+    counts: GlobalStatsResponse
+    modules: ModuleStats
+    active_campaigns: List[IncidentResponse]
+    latest_threats: List[LatestThreatItem]
+    recent_reports: List[ReportOut]

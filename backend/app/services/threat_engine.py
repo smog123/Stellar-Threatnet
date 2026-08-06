@@ -11,7 +11,7 @@ import csv
 import hashlib
 import io
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional, Sequence
 
 from fastapi import HTTPException
@@ -42,9 +42,14 @@ from app.schemas.threats import (
     IncidentResponse,
     IncidentUpdate,
     LatestThreatItem,
+    ModuleStats,
+    NetworkStatusOut,
     ReportOut,
     SearchResultItem,
     SearchResults,
+    SocOverviewResponse,
+    StatusCounts,
+    ThreatLandscape,
     TokenLookupResponse,
     WalletLookupResponse,
 )
@@ -456,6 +461,96 @@ class ThreatService:
             active_campaigns_count=active_campaigns,
             pending_reports=pending_reports,
             total_indicators=total_indicators,
+        )
+
+    # ------------------------------------------------------------------ #
+    # Security Operations Center (SOC) overview
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    async def get_soc_overview(db: AsyncSession) -> SocOverviewResponse:
+        """Aggregate everything the SOC dashboard needs in a single call.
+
+        Derives the network security level from live signal (active campaigns
+        and confirmed-malicious totals) so the banner reflects reality rather
+        than a hardcoded state.
+        """
+        stats = await ThreatService.get_stats(db)
+
+        async def _status_counts(model: Any, id_col: Any) -> StatusCounts:
+            rows = (await db.execute(select(model.status, func.count(id_col)).group_by(model.status))).all()
+            counts = {
+                "confirmed_malicious": 0,
+                "suspicious": 0,
+                "under_investigation": 0,
+                "trusted": 0,
+            }
+            for status, count in rows:
+                key = status.value if hasattr(status, "value") else str(status)
+                if key in counts:
+                    counts[key] = count
+            return StatusCounts(**counts)
+
+        landscape = ThreatLandscape(
+            wallets=await _status_counts(WalletReputation, WalletReputation.address),
+            domains=await _status_counts(DomainReputation, DomainReputation.domain_name),
+            tokens=await _status_counts(TokenReputation, TokenReputation.asset_identifier),
+        )
+
+        active_rows = (
+            await db.execute(
+                select(Incident)
+                .where(Incident.status.in_([IncidentStatus.OPEN, IncidentStatus.INVESTIGATING]))
+                .order_by(Incident.updated_at.desc())
+                .limit(5)
+            )
+        ).scalars().all()
+        active_campaigns = [ThreatService._incident_response(r) for r in active_rows]
+
+        recent_rows = (
+            await db.execute(
+                select(CommunityReport).order_by(CommunityReport.created_at.desc()).limit(6)
+            )
+        ).scalars().all()
+        recent_reports = [ThreatService._report_out(r) for r in recent_rows]
+
+        latest_threats = await ThreatService.latest_threats(db, 8)
+
+        # Derive network posture from live signal.
+        malicious_total = (
+            landscape.wallets.confirmed_malicious
+            + landscape.domains.confirmed_malicious
+            + landscape.tokens.confirmed_malicious
+        )
+        active_count = len(active_campaigns)
+        if active_count >= 3 or malicious_total >= 10:
+            level, label = "high", "Elevated Threat Activity"
+            summary = (
+                f"{malicious_total} confirmed malicious indicators and {active_count} active "
+                "campaigns are being tracked. Apply extra scrutiny to unsolicited airdrops, "
+                "homograph domains, and requests for secret keys."
+            )
+        elif active_count >= 1 or stats.pending_reports > 5:
+            level, label = "elevated", "Heightened Awareness"
+            summary = (
+                f"{active_count} active campaign(s) and {stats.pending_reports} report(s) awaiting "
+                "moderation. Community reporting is engaged — verify entities before transacting."
+            )
+        else:
+            level, label = "normal", "Baseline Monitoring"
+            summary = (
+                "No active campaigns detected. ThreatNet is monitoring wallets, domains, and "
+                "tokens across the Stellar ecosystem."
+            )
+
+        return SocOverviewResponse(
+            generated_at=datetime.now(timezone.utc),
+            network_status=NetworkStatusOut(level=level, label=label, summary=summary),
+            landscape=landscape,
+            counts=stats,
+            modules=ModuleStats(),
+            active_campaigns=active_campaigns,
+            latest_threats=latest_threats,
+            recent_reports=recent_reports,
         )
 
     # ------------------------------------------------------------------ #
