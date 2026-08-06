@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { getIncidents, Incident } from "@/lib/api";
-import StatusBadge, { severityColor } from "@/components/StatusBadge";
+import IncidentCard from "@/components/IncidentCard";
+import StatusFilter from "@/components/StatusFilter";
 
 const STATUSES = ["", "open", "investigating", "resolved", "dismissed"];
 
@@ -32,24 +33,7 @@ export default function IncidentsPage() {
             Attacks, scams, phishing campaigns, and Soroban contract vulnerabilities with timelines and mitigations.
           </p>
         </div>
-        <div className="flex gap-2">
-          {STATUSES.map((s) => (
-            <button
-              key={s}
-              onClick={() => {
-                setStatus(s);
-                setOffset(0);
-              }}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition ${
-                status === s
-                  ? "bg-threat-accent/15 text-threat-accent ring-1 ring-threat-accent/40"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white"
-              }`}
-            >
-              {s === "" ? "All" : s}
-            </button>
-          ))}
-        </div>
+        <StatusFilter options={STATUSES} value={status} onChange={(s) => { setStatus(s); setOffset(0); }} />
       </section>
 
       {error ? <div className="panel border-rose-500/40 p-4 text-sm text-rose-400">{error}</div> : null}
@@ -61,32 +45,7 @@ export default function IncidentsPage() {
 
       <section className="space-y-4">
         {items.map((inc) => (
-          <article key={inc.id} className="panel panel-hover p-5">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-3">
-                <span className="mono text-xs text-slate-500">{inc.id}</span>
-                <StatusBadge status={inc.status} />
-              </div>
-              <span className={`text-xs font-bold uppercase ${severityColor(inc.severity)}`}>{inc.severity}</span>
-            </div>
-            <h2 className="mt-2 text-base font-semibold text-white">{inc.title}</h2>
-            <p className="mt-1 text-sm leading-relaxed text-slate-400">{inc.description}</p>
-            <div className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
-              <div>
-                <p className="label mb-1">Affected services</p>
-                <p className="text-slate-300">{inc.affected_services}</p>
-              </div>
-              <div>
-                <p className="label mb-1">Mitigations</p>
-                <p className="text-slate-300">{inc.mitigations}</p>
-              </div>
-            </div>
-            {inc.references ? (
-              <p className="mt-3 text-xs text-slate-500">
-                References: <span className="mono text-threat-accent">{inc.references}</span>
-              </p>
-            ) : null}
-          </article>
+          <IncidentCard key={inc.id} incident={inc} />
         ))}
       </section>
 

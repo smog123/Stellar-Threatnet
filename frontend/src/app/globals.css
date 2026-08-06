@@ -4,6 +4,21 @@
 
 :root {
   color-scheme: dark;
+
+  --threat-bg-rgb: 7 11 20;
+  --threat-panel-rgb: 13 20 36;
+  --threat-border-rgb: 28 41 66;
+  --threat-accent-rgb: 34 211 238;
+}
+
+/* Light theme — toggled via the `.light` class on <html> (ThemeToggle / layout script) */
+html.light {
+  color-scheme: light;
+
+  --threat-bg-rgb: 244 247 251;
+  --threat-panel-rgb: 255 255 255;
+  --threat-border-rgb: 217 225 238;
+  --threat-accent-rgb: 8 145 178;
 }
 
 body {
@@ -12,6 +27,12 @@ body {
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.08), transparent),
     radial-gradient(ellipse 60% 40% at 90% 110%, rgba(244, 63, 94, 0.05), transparent);
   background-attachment: fixed;
+}
+
+html.light body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(8, 145, 178, 0.07), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 110%, rgba(244, 63, 94, 0.04), transparent);
 }
 
 ::-webkit-scrollbar {
@@ -27,6 +48,74 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #2b3d63;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #eef2f8;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #c3cede;
+  border-radius: 8px;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #a8b6cc;
+}
+
+/* ------------------------------------------------------------------ #
+   Light theme remap of hardcoded Tailwind utilities.
+   The dashboard is dark-first; these overrides flip the fixed
+   slate/white classes so every page reads correctly on light surfaces.
+
+   NOTE: if you introduce a NEW fixed utility color (e.g. text-slate-600,
+   bg-white/10, text-red-400) you MUST add a matching override here,
+   otherwise it will render illegibly in light mode.
+   ------------------------------------------------------------------ # */
+html.light .text-white {
+  color: #0f172a;
+}
+html.light .text-slate-200 {
+  color: #334155;
+}
+html.light .text-slate-300 {
+  color: #475569;
+}
+html.light .text-slate-400 {
+  color: #64748b;
+}
+html.light .text-slate-500 {
+  color: #94a3b8;
+}
+html.light .text-amber-300 {
+  color: #b45309;
+}
+html.light .hover\:text-white:hover {
+  color: #0f172a;
+}
+html.light .bg-white\/5 {
+  background-color: rgb(15 23 42 / 0.05);
+}
+html.light .hover\:bg-white\/5:hover {
+  background-color: rgb(15 23 42 / 0.05);
+}
+html.light ::placeholder {
+  color: #94a3b8;
+}
+
+/* Deepen status / stat colors for contrast on light surfaces */
+html.light .text-rose-400 {
+  color: #e11d48;
+}
+html.light .text-amber-400 {
+  color: #d97706;
+}
+html.light .text-sky-400 {
+  color: #0284c7;
+}
+html.light .text-emerald-400 {
+  color: #059669;
+}
+html.light .text-orange-400 {
+  color: #ea580c;
 }
 
 @layer components {
