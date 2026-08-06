@@ -107,6 +107,22 @@ ThreatNet uses a decoupled microservices architecture designed for high throughp
 
 ---
 
+## 🔍 How ThreatNet Detects Threats on Stellar
+
+ThreatNet uses a combination of **automated Stellar ledger monitoring**, **algorithmic heuristics**, and **cryptographic proof verification**:
+
+### 1. **Stellar Horizon Ledger Watcher (On-Chain Automation)**
+- 📩 **Memo Phishing & Dust Spammers:** Scans live Stellar ledger payments for 0.0000001 XLM transfers carrying malicious URL text in `MEMO_TEXT` / `MEMO_MEMO` fields.
+- 💸 **Automated Wallet Drainers:** Monitors rapid sequential funds transfers from newly created accounts to central destination keys (`G...`).
+- 🪙 **Asset Impersonation (`CODE:ISSUER`):** Audits newly created assets where asset codes match major tokens (e.g. `USDC`, `BTC`) but the `ISSUER` key does not match official ecosystem anchors.
+
+### 2. **Soroban Smart Contract & Web Surface Analysis**
+- 📜 **Soroban Host Function Scans:** Analyzes `InvokeHostFunction` calls for dangerous authorization scopes and reentrancy vectors.
+- 🌐 **Homograph & Typosquatting Scanning:** Automatically fuzzy-matches newly registered web domains against official Stellar URLs (`stellar.org`, `lobstr.co`, `freighter.app`).
+- 🔒 **On-Chain Indicator Hashes:** Stores confirmed indicator SHA-256 hashes in ThreatNet's Soroban Rust contract for zero-trust client lookups.
+
+---
+
 ## 🧩 Core Platform Modules
 
 | Module | Description | Primary Use Case |
