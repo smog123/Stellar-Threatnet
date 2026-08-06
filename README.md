@@ -9,222 +9,329 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Community](https://img.shields.io/badge/Community-Discussions-8b5cf6.svg)](https://github.com/smog123/Stellar-Threatnet/discussions)
 
-# Stellar ThreatNet
+# 🛡️ Stellar ThreatNet
 
-> **The Open Threat Intelligence Platform for the Stellar Ecosystem.**
+> **Open-Source Shared Security & Threat Intelligence Infrastructure for the Stellar Ecosystem.**
+
+[Live Dashboard](https://frontend-rosy-five-50.vercel.app) · [Live API Docs](https://stellar-threatnet-api.onrender.com/docs) · [GitHub Repository](https://github.com/smog123/Stellar-Threatnet)
 
 </div>
 
-Stellar ThreatNet is the first open-source threat intelligence infrastructure
-dedicated to the Stellar blockchain ecosystem. It collects, validates, scores,
-and distributes threat intelligence on **malicious wallet addresses, phishing
-domains, scam tokens, and security incidents** — the shared security layer that
-wallets, exchanges, dApps, explorers, organizations, developers, and security
-researchers can all integrate with.
+---
 
-ThreatNet is **NOT** a wallet, **NOT** a blockchain explorer, and **NOT** an
-antivirus. It is the security infrastructure underneath them.
+## 📌 Executive Summary
+
+**Stellar ThreatNet** is the first open-source, decentralized threat intelligence platform built specifically for the **Stellar blockchain ecosystem**.
+
+In Web3 security, malicious actors frequently deploy credential-harvesting phishing domains, automated wallet drainers, fake airdrop tokens, and scam DEX liquidity pools. **ThreatNet solves this by serving as the underlying security intelligence layer** — collecting, validating, scoring, and distributing reputation data on malicious Stellar wallet addresses, domains, and tokens.
+
+> 💡 **What ThreatNet Is and Is Not:**
+> - **IS:** The security intelligence layer underneath Web3 applications (wallets, exchanges, dApps, block explorers, browser extensions, and security researchers).
+> - **IS NOT:** A crypto wallet, a blockchain explorer, or an antivirus application.
 
 ---
 
-## Table of Contents
+## 📖 Table of Contents
 
-- [Core Features](#-core-features)
-- [Architecture](#-architecture)
-- [Repository Layout](#-repository-layout)
-- [Quick Start](#-quick-start)
-- [API Overview](#-api-overview)
-- [Reputation Scoring Model](#-reputation-scoring-model)
-- [Soroban On-Chain Contract](#-soroban-on-chain-contract)
-- [Browser Extension](#-browser-extension)
-- [Testing](#-testing)
-- [Documentation](#-documentation)
-- [Contributing](#-contributing)
-- [Community](#-community)
-- [Maintainers](#-maintainers)
-- [Contributors](#-contributors)
+- [Executive Summary](#-executive-summary)
+- [Why Stellar ThreatNet?](#-why-stellar-threatnet)
+- [System Architecture](#-system-architecture)
+- [Core Platform Modules](#-core-platform-modules)
+- [Reputation Scoring Engine](#-reputation-scoring-engine)
+- [Soroban Smart Contract (On-Chain Registry)](#-soroban-smart-contract-on-chain-registry)
+- [Repository Structure](#-repository-structure)
+- [Quick Start Guide](#-quick-start-guide)
+  - [Prerequisites](#prerequisites)
+  - [Option A — Docker Compose (Full Stack)](#option-a--docker-compose-full-stack)
+  - [Option B — Backend Local Dev (Fastest)](#option-b--backend-local-dev-fastest)
+  - [Option C — Frontend Dashboard](#option-c--frontend-dashboard)
+- [REST API Reference](#-rest-api-reference)
+- [Community Moderation Workflow](#-community-moderation-workflow)
+- [CLI & SDK Usage](#-cli--sdk-usage)
+- [Testing & Quality Assurance](#-testing--quality-assurance)
 - [Security & Responsible Disclosure](#-security--responsible-disclosure)
-- [License](#-license)
+- [Contributing & Community](#-contributing--community)
+- [License & Credits](#-license--credits)
 
 ---
 
-## 🌟 Core Features
+## 🎯 Why Stellar ThreatNet?
 
-| Module | What it does |
-| --- | --- |
-| **Wallet Reputation Engine** | Real-time scores (0–100) and categories (confirmed malicious / suspicious / under investigation / trusted) for Stellar `G...` public keys, with an explainable evidence trail for every score. |
-| **Domain Reputation System** | Detects phishing sites — fake wallets, fake exchanges, fake airdrops, fake token sales — with confidence scores. |
-| **Token Reputation Index** | Tracks Stellar assets (`CODE:ISSUER`): impersonation tokens, scam/rugpull tokens, abandoned tokens, verified projects. |
-| **Incident Intelligence Database** | Structured incidents (attacks, scams, phishing campaigns, wallet compromises, Soroban contract vulnerabilities) with status, severity, mitigations, and references. |
-| **Threat Feed API** | Versioned REST API with OpenAPI v3 docs, pagination, filtering, rate limiting, and a downloadable CSV threat feed. |
-| **Community Reporting & Moderation** | Authenticated users submit reports; moderators approve/reject via a moderation queue with per-user voting and full audit logging. Approved reports attach evidence and **recompute reputation scores**. |
-| **AI Threat Assistant** | Answers "Is this wallet suspicious?", "Explain this phishing campaign", "Summarize today's threats" — always evidence-based, never overconfident. |
-| **Soroban On-Chain Registry** | Rust smart contract storing SHA-256 hashes of confirmed indicators on the Stellar ledger for zero-trust verification. |
-| **Browser Extension** | Manifest V3 extension that warns users before visiting known Stellar phishing domains. |
-| **CLI & SDKs** | Official Python SDK, TypeScript SDK, and a `threatnet` CLI for terminal workflows. |
+Blockchains are immutable and pseudonymized by design. When a user sends funds to a malicious wallet or enters their seed phrase into a fake dApp portal, transactions cannot be reversed.
+
+Existing security solutions are often proprietary, siloed, or lack specialized context for Stellar constructs (such as `G...` public keys, Stellar asset codes `CODE:ISSUER`, SEP compliance standards, and Soroban smart contracts).
+
+**ThreatNet bridges this gap by providing:**
+1. **Real-time Explainable Reputation Scores (0–100):** Every wallet, domain, and token gets a score derived from verified evidence.
+2. **Open REST API & Feeds:** Wallets and dApps can query APIs in <10ms to warn users *before* they sign dangerous transactions.
+3. **On-Chain Zero-Trust Registry:** Confirmed indicator SHA-256 hashes are anchored directly on the Stellar ledger via Soroban smart contracts.
+4. **Community-Driven Moderation:** Security researchers submit reports; moderators verify evidence and trigger score re-evaluations.
 
 ---
 
-## 🚀 Architecture
+## 🚀 System Architecture
+
+ThreatNet uses a decoupled microservices architecture designed for high throughput, low latency, and operational resilience:
 
 ```
-                          ┌───────────────────────────┐
-                          │   Community & Analysts    │
-                          └─────────────┬─────────────┘
-                                        │
-                                        ▼
-┌───────────────────┐     ┌───────────────────────────┐     ┌───────────────────┐
-│ Browser Extension │ ──► │  Next.js 14 Dashboard /   │ ──► │ CLI & SDKs        │
-│ (Manifest V3)     │     │  Frontend (Tailwind CSS)  │     │ (Python / JS)     │
-└───────────────────┘     └─────────────┬─────────────┘     └───────────────────┘
-                                        │
-                                        ▼
-                          ┌───────────────────────────┐
-                          │     FastAPI Backend       │
-                          │ (JWT + API keys, RBAC)    │
-                          └─────────────┬─────────────┘
-                                        │
-             ┌──────────────────────────┼──────────────────────────┐
-             ▼                          ▼                          ▼
-  ┌───────────────────┐      ┌────────────────────┐      ┌───────────────────┐
-  │ PostgreSQL 15     │      │ Redis 7 / Celery   │      │ Soroban Contract  │
-  │ (SQLAlchemy 2.0)  │      │ (Cache & Workers)  │      │ (Stellar Ledger)  │
-  └───────────────────┘      └────────────────────┘      └───────────────────┘
+                            ┌───────────────────────────┐
+                            │   Community & Analysts    │
+                            └─────────────┬─────────────┘
+                                          │
+                                          ▼
+  ┌───────────────────┐     ┌───────────────────────────┐     ┌───────────────────┐
+  │ Browser Extension │ ──► │  Next.js 14 Dashboard /   │ ──► │ CLI & SDKs        │
+  │ (Manifest V3)     │     │  Frontend (Tailwind CSS)  │     │ (Python / JS)     │
+  └───────────────────┘     └─────────────┬─────────────┘     └───────────────────┘
+                                          │
+                                          ▼
+                            ┌───────────────────────────┐
+                            │     FastAPI Backend       │
+                            │ (JWT + API keys, RBAC)    │
+                            └─────────────┬─────────────┘
+                                          │
+               ┌──────────────────────────┼──────────────────────────┐
+               ▼                          ▼                          ▼
+    ┌───────────────────┐      ┌────────────────────┐      ┌───────────────────┐
+    │ PostgreSQL 15     │      │ Redis 7 / Celery   │      │ Soroban Contract  │
+    │ (SQLAlchemy 2.0)  │      │ (Cache & Workers)  │      │ (Stellar Ledger)  │
+    └───────────────────┘      └────────────────────┘      └───────────────────┘
 ```
 
-**Components**
-
-- **FastAPI backend** (`backend/`) — async Python 3.11+; JWT authentication plus
-  `X-API-Key` support, role-based access control (`admin`, `analyst`,
-  `moderator`, `reporter`, `read_only`), slowapi rate limiting, Redis lookup
-  caching with graceful fallback to PostgreSQL, and append-only audit logs.
-- **PostgreSQL** — normalized relational store: users, wallets, domains,
-  tokens, incidents, community reports, evidence, votes, API keys, audit logs.
-- **Redis + Celery** — 15-minute lookup cache and background workers (score
-  recalculation, Horizon polling hooks).
-- **Soroban contract** (`contracts/`) — on-chain registry of indicator hashes
-  for clients that want to verify without trusting the API.
+### **Architecture Highlights**
+- **Frontend Dashboard (Next.js 14 / TypeScript / Tailwind):** Production-grade SOC interface supporting both Light Mode (default) and Dark Mode.
+- **Async Backend API (FastAPI / Python 3.11+):** Asynchronous REST API utilizing SQLAlchemy 2.0, slowapi rate limiting, JWT authentication, and RBAC.
+- **Relational Store (PostgreSQL 15):** Normalized storage for indicators, incidents, audit logs, user credentials, and moderation votes.
+- **Cache & Async Task Queue (Redis 7 + Celery):** 15-minute lookup caching with fallback and background score recalculation.
+- **Soroban Smart Contract (Rust / Soroban SDK 27):** Immutable on-chain registry storing indicator SHA-256 hashes.
 
 ---
 
-## 📁 Repository Layout
+## 🧩 Core Platform Modules
+
+| Module | Description | Primary Use Case |
+| :--- | :--- | :--- |
+| **Wallet Reputation Engine** | Real-time score (0–100) and verdict (`confirmed_malicious`, `suspicious`, `under_investigation`, `trusted`) for Stellar `G...` keys. | Wallet signature warning before transaction submission. |
+| **Domain Reputation System** | Detects fake Stellar portals, spoofed DEX claim sites, and homograph phishing domains. | Phishing protection in browser extension & dApp connects. |
+| **Token Reputation Index** | Tracks Stellar assets (`CODE:ISSUER`), identifying impersonation and spam tokens. | Filtering asset lists on DEX interfaces & explorers. |
+| **Incident Intelligence Database** | Timeline of major Stellar ecosystem security events with severity and mitigations. | Ecosystem security monitoring and SOC awareness. |
+| **Community Moderation Queue** | Upvote/downvote and moderator workflow for crowdsourced threat submissions. | Decentralized evidence validation and scoring inputs. |
+| **Soroban On-Chain Registry** | Rust contract storing SHA-256 indicator hashes on Stellar Mainnet/Testnet. | Zero-trust verification without relying on REST APIs. |
+| **Browser Phishing Protection** | Manifest V3 Chrome/Brave extension providing instant domain warnings. | Direct end-user protection against fake websites. |
+
+---
+
+## 🧮 Reputation Scoring Engine
+
+Reputation scores range from **0 to 100**, where **0 is confirmed malicious** and **100 is fully trusted**.
+
+### **Verdict Ranges**
+
+| Score Range | Status | Recommended Action |
+| :--- | :--- | :--- |
+| **0 – 20** | `confirmed_malicious` | **BLOCK** transaction / warning banner |
+| **21 – 50** | `suspicious` | **WARN** user to verify details |
+| **51 – 79** | `under_investigation` | Display informational badge |
+| **80 – 100** | `trusted` | **ALLOW** normal operation |
+
+### **Mathematical Scoring Formula**
+
+Reputation scores are dynamically recalculated from attached evidence weights ($W_i$) and confidence coefficients ($C_i$):
+
+$$S(E) = \max\left(0, \min\left(100, 80 - \sum (W_i \times C_i) + 20 \cdot \mathbf{1}_{\text{verified}}\right)\right)$$
+
+* **Base Reputation:** Default initial score is 80 (Neutral).
+* **Evidence Deductions ($W_i$):** On-chain proof (weight 50), payload sample (weight 40), transaction hash (weight 30), screenshot (weight 25).
+* **Confidence ($C_i$):** Ranges from `0.3` (unverified report) to `1.0` (cryptographic proof).
+* **Verified Boost:** $+20$ points for official ecosystem partner verification.
+
+---
+
+## ⛓️ Soroban Smart Contract (On-Chain Registry)
+
+Located in `contracts/soroban_threatnet/`, the Soroban smart contract allows zero-trust clients to verify indicator hashes directly on the Stellar ledger.
+
+### **Contract Methods**
+- `initialize(admin: Address)` — Sets the admin authority (single execution safety).
+- `publish_threat_indicator(admin: Address, hash: BytesN<32>, level: u32, score: u32)` — Admin-gated publication of indicator hash.
+- `get_threat_indicator(hash: BytesN<32>) -> Option<Indicator>` — On-chain lookup.
+- `get_total_indicators() -> u32` — Returns total indicators registered on-chain.
+
+> 🔒 **Privacy Guarantee:** Raw wallet addresses or domain names are never stored on the public blockchain — only cryptographic SHA-256 hashes are recorded.
+
+---
+
+## 📁 Repository Structure
 
 ```
-backend/                 FastAPI service (Python 3.11+, async SQLAlchemy, Celery, Redis)
-  app/api/v1/            REST endpoints (auth, lookups, incidents, reports, stats, AI)
-  app/services/          threat engine, reputation scoring, caching, Celery tasks
-  tests/                 pytest suite (45 tests, in-memory SQLite)
-contracts/soroban_threatnet/   Soroban on-chain threat hash registry (Rust, SDK 27)
-frontend/                Next.js 14 dashboard (TypeScript, Tailwind)
-cli/                     threatnet CLI (lookup, submit, feed, stats, ai)
-sdks/python/             Official Python SDK
-sdks/javascript/         Official TypeScript SDK
-browser-extension/       Manifest V3 phishing warning extension
-docs/                    architecture, threat model, API, deployment, governance
-.github/                 CI, CodeQL, Dependabot, issue/PR templates
+stellar-threatnet/
+├── backend/                 # FastAPI service (Python 3.11+, async SQLAlchemy, Celery)
+│   ├── app/api/v1/          # REST API endpoints (auth, lookups, incidents, reports, stats)
+│   ├── app/core/            # Config, security, JWT, rate limiting
+│   ├── app/models/          # SQLAlchemy relational models
+│   ├── app/schemas/         # Pydantic schemas
+│   ├── app/services/        # Threat scoring engine, cache, tasks
+│   └── tests/               # Pytest suite (45 unit & integration tests)
+├── contracts/               # Soroban threat indicator hash registry (Rust, SDK 27)
+├── frontend/                # Next.js 14 dashboard (TypeScript, Tailwind CSS)
+├── cli/                     # Official `threatnet` terminal CLI tool
+├── sdks/                    # Client SDKs
+│   ├── python/              # Python SDK
+│   └── javascript/          # TypeScript / JavaScript SDK
+├── browser-extension/       # Manifest V3 Chrome extension
+├── docs/                    # Deep-dive documentation (Architecture, Threat Model, API)
+├── assets/                  # Logos and branding SVGs
+├── render.yaml              # 1-Click Render cloud deployment blueprint
+├── docker-compose.yml       # Production Docker Compose orchestration
+└── Makefile                 # Build & test task runner
 ```
 
 ---
 
-## 📋 Quick Start
+## 📋 Quick Start Guide
 
 ### Prerequisites
+- **Python:** 3.11 or higher
+- **Node.js:** 18 or higher
+- **Docker & Docker Compose** (optional for containerized deployment)
+- **Rust & Cargo** (optional for smart contract development)
 
-| Tool | Version | Used for |
-| --- | --- | --- |
-| Python | 3.11+ | Backend |
-| Node.js | 18+ | Frontend, JS SDK |
-| Docker & Docker Compose | — | Full-stack dev environment |
-| Rust + Cargo | stable (2024+) | Soroban contract |
+---
 
-### Option A — Full stack with Docker Compose
+### Option A — Docker Compose (Full Stack)
+
+To spin up the entire application stack (PostgreSQL, Redis, FastAPI Backend, Celery Worker, Next.js Dashboard):
 
 ```bash
+# 1. Clone repository
 git clone https://github.com/smog123/Stellar-Threatnet.git
 cd Stellar-Threatnet
-cp .env.example .env          # then set a real SECRET_KEY
+
+# 2. Copy environment file and configure secrets
+cp .env.example .env
+
+# 3. Build and launch containers
 docker compose up -d --build
 ```
 
-| Service | URL |
-| --- | --- |
-| FastAPI + Swagger UI | http://localhost:8000/docs |
-| Next.js dashboard | http://localhost:3000 |
-| PostgreSQL | `localhost:5432` |
-| Redis | `localhost:6379` |
+**Services will be live at:**
+- **Frontend Dashboard:** [http://localhost:3000](http://localhost:3000)
+- **FastAPI OpenAPI Documentation:** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **PostgreSQL Database:** `localhost:5432`
+- **Redis Cache:** `localhost:6379`
 
-### Option B — Backend without Docker (fastest for API work)
+---
+
+### Option B — Backend Local Dev (Fastest)
+
+For API development without Docker:
 
 ```bash
 cd backend
-python3 -m venv .venv && source .venv/bin/activate
+
+# Create and activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 
-# Zero-config dev mode: uses SQLite + in-memory rate limiting (no Redis needed)
-DATABASE_URL=sqlite+aiosqlite:///./dev.db CACHE_ENABLED=false uvicorn app.main:app --reload
+# Start backend in zero-config dev mode (SQLite + local memory)
+DATABASE_URL=sqlite+aiosqlite:///./dev.db CACHE_ENABLED=false uvicorn app.main:app --reload --port 8000
 ```
 
-> For a PostgreSQL + Redis setup, use `docker compose up -d postgres redis`,
-> then run uvicorn with the default `DATABASE_URL` from `.env`.
+---
 
-### Seed the database (SOC demo data)
-
-The dashboard comes alive with realistic threat intelligence — real publicly
-documented Stellar phishing domains, campaigns, reports, and demo users:
-
-```bash
-cd backend
-# SQLite dev DB (or run without DATABASE_URL against your compose PostgreSQL)
-DATABASE_URL=sqlite+aiosqlite:///./dev.db python -m scripts.seed
-# wipe + reseed (dev only; refuses to run with ENV=production)
-DATABASE_URL=sqlite+aiosqlite:///./dev.db python -m scripts.seed --reset
-```
-
-Demo users are created with password `threatnet-demo` (e.g.
-`admin@stellar-threatnet.org`, `reporter@stellar-threatnet.org`). See
-`backend/scripts/seed.py` for provenance notes.
-
-### Frontend
+### Option C — Frontend Dashboard
 
 ```bash
 cd frontend
+
+# Install dependencies
 npm install
-npm run dev                     # http://localhost:3000
-# point the dashboard at your backend:
-# NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+
+# Run dev server
+npm run dev
 ```
 
-### CLI
+---
 
+## 📡 REST API Reference
+
+Base URL: `https://stellar-threatnet-api.onrender.com/api/v1` (or `http://localhost:8000/api/v1`)
+
+| Method | Endpoint | Auth Level | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/lookup/wallet/{address}` | Public | Lookup Stellar wallet reputation (0–100 + category) |
+| `GET` | `/lookup/domain/{domain}` | Public | Lookup domain phishing confidence score |
+| `GET` | `/lookup/token/{code}/{issuer}` | Public | Lookup token reputation by `CODE:ISSUER` |
+| `GET` | `/incidents` | Public | Paginated list of security incidents |
+| `POST` | `/incidents` | Analyst+ | Create a new security incident record |
+| `GET` | `/threats/latest` | Public | List recently updated non-trusted entities |
+| `GET` | `/feed` | Public | Export threat intelligence data in CSV format |
+| `GET` | `/stats` | Public | Global threat counts and metrics |
+| `GET` | `/stats/overview` | Public | SOC Dashboard summary metrics |
+| `GET` | `/search?q={query}` | Public | Multi-entity threat search |
+| `POST` | `/reports` | Authenticated | Submit community threat report |
+| `POST` | `/reports/{id}/vote` | Authenticated | Upvote / downvote pending report |
+| `POST` | `/reports/{id}/moderate` | Moderator+ | Approve (triggers score recompute) or reject |
+| `POST` | `/auth/register` | Public | Register new user account |
+| `POST` | `/auth/token` | Public | Obtain OAuth2 JWT access token |
+| `POST` | `/api-keys` | Authenticated | Generate API key (`X-API-Key`) |
+
+---
+
+## 👥 Community Moderation Workflow
+
+ThreatNet employs a transparent 4-stage moderation workflow:
+
+```
+[ Community User ] ──► Submit Report ──► [ Pending Queue ]
+                                               │
+                                 ┌─────────────┴─────────────┐
+                                 ▼                           ▼
+                        [ Upvote / Downvote ]       [ Moderator Review ]
+                                                     │               │
+                                                     ▼               ▼
+                                            [ Approve Report ]  [ Reject ]
+                                                     │
+                                                     ▼
+                                          [ Attach Evidence & ]
+                                          [ Recompute Score   ]
+```
+
+1. **Submission:** Authenticated users submit a report with target type, category, description, and optional evidence URLs.
+2. **Peer Review:** Community users upvote or downvote pending reports (one vote per user).
+3. **Moderation:** Moderators evaluate evidence. Approving a report attaches verified evidence and **automatically recomputes the target's reputation score**.
+4. **Audit Log:** Every decision is written to an immutable append-only audit trail.
+
+---
+
+## 💻 CLI & SDK Usage
+
+### Terminal CLI (`threatnet`)
 ```bash
 cd cli
 pip install -e .
 
-threatnet lookup wallet GABC...1234
-threatnet lookup domain stellar-fake-airdrop.com
-threatnet lookup token USDC GBC...ISSUER
-threatnet stats
-threatnet incidents --status investigating
-threatnet submit domain evil-claim.net --description "harvests seed keys" --token tn_...
+# Wallet lookup
+threatnet lookup wallet GABC1234...
+
+# Export threat feed
 threatnet feed --output feed.csv
-threatnet ai "What is the current phishing campaign?"
 ```
 
-### SDKs
-
-**Python**
-
+### Python SDK
 ```python
 from stellar_threatnet_sdk import ThreatNetClient
 
 async with ThreatNetClient(api_key="tn_...") as client:
-    wallet = await client.lookup_wallet("GABC...1234")
+    wallet = await client.lookup_wallet("GABC1234...")
     print(wallet["status"], wallet["reputation_score"])
 ```
 
-**TypeScript**
-
-```ts
+### TypeScript SDK
+```typescript
 import { ThreatNetClient } from "@stellar-threatnet/sdk";
 
 const client = new ThreatNetClient({ apiKey: "tn_..." });
@@ -234,190 +341,56 @@ console.log(stats);
 
 ---
 
-## 📡 API Overview
+## ✅ Testing & Quality Assurance
 
-Base URL: `http://localhost:8000/api/v1` · Interactive docs: `/docs`
-
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/lookup/wallet/{address}` | public | Wallet reputation (0–100 + category) |
-| GET | `/lookup/domain/{domain}` | public | Phishing/impersonation confidence |
-| GET | `/lookup/token/{code}/{issuer}` | public | Token reputation by `CODE:ISSUER` |
-| GET | `/incidents` | public | Paginated incident timeline (+ `status`, `severity` filters) |
-| POST | `/incidents` | analyst+ | Publish a security incident |
-| GET | `/threats/latest` | public | Recently updated non-trusted entities |
-| GET | `/feed` | public | Full CSV threat feed |
-| GET | `/stats` | public | Global dashboard metrics |
-| GET | `/search?q=` | public | Search wallets, domains, tokens, incidents |
-| POST | `/reports` | auth | Submit a community threat report |
-| POST | `/reports/{id}/vote` | auth | Up/down-vote a pending report (one per user) |
-| POST | `/reports/{id}/moderate` | moderator+ | Approve (attaches evidence) or reject |
-| POST | `/ai/query` | public | Ask the AI threat assistant |
-| POST | `/auth/register` · `/auth/token` | public | Account creation and login |
-| POST | `/api-keys` | auth | Create an API key (shown once) |
-| GET | `/admin/audit-logs` | admin | Append-only audit trail |
-
-**Auth**: `Authorization: Bearer <jwt>` for interactive clients, or
-`X-API-Key: tn_...` for programmatic access. Authentication endpoints are rate
-limited (register 5/min, login 10/min) to resist brute force.
-
-A `404` on any lookup means **no data** — treat unknown entities as neutral,
-never as trusted. See [docs/API.md](docs/API.md) for the full reference.
-
----
-
-## 🧮 Reputation Scoring Model
-
-Scores run 0–100:
-
-| Range | Status | Recommendation |
-| --- | --- | --- |
-| 0–20 | confirmed malicious | **Block** |
-| 21–50 | suspicious | **Warn** |
-| 51–79 | under investigation | Info |
-| 80–100 | trusted | Allow |
-
-The score is computed from attached evidence:
-
-```
-S(E) = 80 − Σ(Wᵢ × Cᵢ) + 20(verified)        (clamped to [0, 100])
-```
-
-where `Wᵢ` is the weight of evidence type `i` (on-chain proof 50, payload
-sample 40, tx hash 30, screenshot 25, multi-source 20) and `Cᵢ` is its
-confidence (0.3 community → 1.0 on-chain proof). Full details in
-[docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
-
----
-
-## ⛓️ Soroban On-Chain Contract
-
-`contracts/soroban_threatnet/` is a Soroban (Rust, SDK 27) contract storing
-**SHA-256 hashes** of confirmed indicators on the Stellar ledger:
-
-- `initialize(admin)` — set the admin (once).
-- `publish_threat_indicator(admin, hash, level, score)` — admin-only insert/update.
-- `get_threat_indicator(hash)` — zero-trust on-chain verification.
-- `get_total_indicators()` — registry size.
-
-Only hashes are stored — the ledger never leaks raw addresses or domains.
-See [contracts/soroban_threatnet/README.md](contracts/soroban_threatnet/README.md).
-
----
-
-## 🧩 Browser Extension
-
-The Manifest V3 extension (`browser-extension/`) checks the current hostname
-against the ThreatNet API, caches results for 15 minutes, and shows a blocking
-banner on confirmed phishing domains or a warning on suspicious ones.
-
-Install in dev: open `chrome://extensions`, enable **Developer mode**, click
-**Load unpacked**, and select `browser-extension/`. See
-[browser-extension/README.md](browser-extension/README.md).
-
----
-
-## ✅ Testing
+ThreatNet maintains strict automated test coverage across all subsystems:
 
 ```bash
-# Backend (45 tests: auth, RBAC, lookups, moderation, scoring, stats, SOC, feed)
+# Backend Pytest Suite (45 unit/integration tests)
 cd backend && .venv/bin/python -m pytest -q
 
-# Frontend
-cd frontend && npm run lint && npm run build
-
-# Soroban contract (unit tests + release wasm build)
+# Soroban Smart Contract Tests (3 Rust unit tests + Wasm build)
 cd contracts/soroban_threatnet
 cargo test
-rustup target add wasm32v1-none && cargo build --target wasm32v1-none --release
+cargo build --target wasm32v1-none --release
 
-# JavaScript SDK
-cd sdks/javascript && npx tsc --noEmit
+# Frontend Type Check & ESLint
+cd frontend
+npm run lint
+npx tsc --noEmit
 ```
-
-Common tasks are also available via the root `Makefile` (`make test`,
-`make lint`, `make contract`, `make dev`, ...).
-
----
-
-## 📚 Documentation
-
-- [Architecture & System Design](docs/ARCHITECTURE.md)
-- [Git Workflow Rules](docs/GIT_WORKFLOW.md)
-- [Threat Intelligence Data Model](docs/THREAT_MODEL.md)
-- [REST API Reference](docs/API.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-- [Developer Guide](docs/DEVELOPER_GUIDE.md)
-- [Governance Model](docs/GOVERNANCE.md)
-- [Project Roadmap](ROADMAP.md)
-- [Good First Issues](GOOD_FIRST_ISSUES.md)
-
----
-
-## 🤝 Contributing
-
-We welcome contributors — security researchers, Rust/Python/TypeScript
-engineers, and docs writers. Please read the [Contributing Guide](CONTRIBUTING.md)
-and [Code of Conduct](CODE_OF_CONDUCT.md) first, then grab an issue from
-[GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md).
-
-CI must pass on every pull request (backend tests, frontend build, contract
-tests, CodeQL). Security-relevant changes (auth, scoring, moderation, the
-contract) require two maintainer reviews.
-
----
-
-## 💬 Community
-
-- **GitHub Discussions** — feature ideas, governance proposals, and ecosystem
-  questions: <https://github.com/stellar-threatnet/stellar-threatnet/discussions>
-- **GitHub Issues** — bug reports and concrete feature requests:
-  <https://github.com/stellar-threatnet/stellar-threatnet/issues>
-- **Security disclosures** — `security@stellar-threatnet.org` (never a public
-  issue; see [SECURITY.md](SECURITY.md)).
-
----
-
-## 🧑‍💻 Maintainers
-
-| Role | Name | GitHub | Contact |
-| --- | --- | --- | --- |
-| Lead Maintainer | smog123 | [@smog123](https://github.com/smog123) | adejumooluwasegun35@gmail.com |
-| Security Contact | Stellar ThreatNet | — | security@stellar-threatnet.org |
-
----
-
-## 👥 Contributors
-
-Thanks to everyone who helps secure the Stellar ecosystem — from one-line docs
-fixes to new detection rules:
-
-<a href="https://github.com/smog123/Stellar-Threatnet/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=smog123/Stellar-Threatnet" alt="Contributors" width="400">
-</a>
-
-Want to be on this list? Read [CONTRIBUTING.md](CONTRIBUTING.md) and pick an
-issue from [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md).
 
 ---
 
 ## 🛡️ Security & Responsible Disclosure
 
-ThreatNet is security infrastructure — report vulnerabilities to
-**security@stellar-threatnet.org** (never a public issue). We operate a 90-day
-coordinated disclosure policy. See [SECURITY.md](SECURITY.md).
+ThreatNet takes security seriously. If you discover a vulnerability within ThreatNet infrastructure:
+- **Do NOT create a public issue.**
+- Email details directly to **`security@stellar-threatnet.org`**.
+- We adhere to a standard **90-day coordinated vulnerability disclosure policy**.
 
-Operational notes:
-
-- Passwords are bcrypt-hashed; JWTs are signed with `SECRET_KEY`; API keys are
-  stored as SHA-256 hashes.
-- The API refuses to start with the default `SECRET_KEY` when
-  `ENV=production`.
-- Every score change and moderation decision is appended to the audit log.
+### **Built-In Security Safeguards**
+- Passwords hashed using `bcrypt`.
+- API Keys stored strictly as cryptographic SHA-256 hashes.
+- Production environment enforces strong `SECRET_KEY` requirements ($\ge 32$ bytes).
+- Full append-only audit log tracking all moderation and administrative actions.
 
 ---
 
-## 📄 License
+## 🤝 Contributing & Community
 
-Stellar ThreatNet is open-source software licensed under the
-[MIT License](LICENSE).
+We welcome contributions from security researchers, Rust/Python/TypeScript engineers, and documentation writers!
+
+1. Read our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
+2. Check out beginner-friendly issues in [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md).
+3. Join community discussions on [GitHub Discussions](https://github.com/smog123/Stellar-Threatnet/discussions).
+
+---
+
+## 📄 License & Credits
+
+Stellar ThreatNet is open-source software released under the [MIT License](LICENSE).
+
+* **Lead Maintainer:** smog123 ([@smog123](https://github.com/smog123))
+* **Repository:** [https://github.com/smog123/Stellar-Threatnet](https://github.com/smog123/Stellar-Threatnet)
+* **Live Dashboard:** [https://frontend-rosy-five-50.vercel.app](https://frontend-rosy-five-50.vercel.app)
