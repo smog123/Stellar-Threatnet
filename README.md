@@ -3,11 +3,11 @@
 <img src="assets/banner.svg" alt="Stellar ThreatNet — Open Threat Intelligence for the Stellar Ecosystem" width="100%">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![CI Pipeline](https://github.com/stellar-threatnet/stellar-threatnet/actions/workflows/ci.yml/badge.svg)](https://github.com/stellar-threatnet/stellar-threatnet/actions)
-[![CodeQL Security Audit](https://github.com/stellar-threatnet/stellar-threatnet/actions/workflows/codeql.yml/badge.svg)](https://github.com/stellar-threatnet/stellar-threatnet/actions)
+[![CI Pipeline](https://github.com/smog123/Stellar-Threatnet/actions/workflows/ci.yml/badge.svg)](https://github.com/smog123/Stellar-Threatnet/actions)
+[![CodeQL Security Audit](https://github.com/smog123/Stellar-Threatnet/actions/workflows/codeql.yml/badge.svg)](https://github.com/smog123/Stellar-Threatnet/actions)
 [![Backend Tests](https://img.shields.io/badge/tests-45%20passing-brightgreen.svg)](backend/tests/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Community](https://img.shields.io/badge/Community-Discussions-8b5cf6.svg)](https://github.com/stellar-threatnet/stellar-threatnet/discussions)
+[![Community](https://img.shields.io/badge/Community-Discussions-8b5cf6.svg)](https://github.com/smog123/Stellar-Threatnet/discussions)
 
 # Stellar ThreatNet
 
@@ -140,8 +140,8 @@ docs/                    architecture, threat model, API, deployment, governance
 ### Option A — Full stack with Docker Compose
 
 ```bash
-git clone https://github.com/stellar-threatnet/stellar-threatnet.git
-cd stellar-threatnet
+git clone https://github.com/smog123/Stellar-Threatnet.git
+cd Stellar-Threatnet
 cp .env.example .env          # then set a real SECRET_KEY
 docker compose up -d --build
 ```
@@ -392,8 +392,8 @@ contract) require two maintainer reviews.
 Thanks to everyone who helps secure the Stellar ecosystem — from one-line docs
 fixes to new detection rules:
 
-<a href="https://github.com/stellar-threatnet/stellar-threatnet/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=stellar-threatnet/stellar-threatnet" alt="Contributors" width="400">
+<a href="https://github.com/smog123/Stellar-Threatnet/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=smog123/Stellar-Threatnet" alt="Contributors" width="400">
 </a>
 
 Want to be on this list? Read [CONTRIBUTING.md](CONTRIBUTING.md) and pick an
