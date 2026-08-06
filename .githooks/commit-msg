@@ -1,0 +1,37 @@
+#!/bin/sh
+# commit-msg hook — enforce Conventional Commits.
+#
+# Format:  <type>(<scope>): <subject>      or      <type>: <subject>
+# Example: feat(backend): add SOC overview endpoint
+#
+# Allowlist of commit types mirrors docs/GIT_WORKFLOW.md. Merge, revert and
+# fixup/squash commits are exempt so native git workflows keep working.
+#
+# To bypass intentionally (rare):  git commit --no-verify
+
+msg_file="$1"
+subject=$(sed -n '1p' "$msg_file")
+
+# Exempt automated/meta commit subjects.
+case "$subject" in
+  Merge\ *|Revert\ *|fixup!\ *|squash!\ *) exit 0 ;;
+esac
+
+TYPE_RE='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|deps|security)(\([a-z0-9-]+\))?!?: .+$'
+
+if ! printf '%s' "$subject" | grep -qE "$TYPE_RE"; then
+  echo "✖ invalid commit subject: $subject" >&2
+  echo "  Expected: <type>(<scope>): <subject>" >&2
+  echo "  Types   : feat fix docs style refactor perf test build ci chore revert deps security" >&2
+  echo "  Example : feat(backend): add SOC overview endpoint" >&2
+  echo "  See docs/GIT_WORKFLOW.md for the full rules." >&2
+  exit 1
+fi
+
+len=$(printf '%s' "$subject" | wc -m)
+if [ "$len" -gt 72 ]; then
+  echo "✖ commit subject too long: ${len} characters (max 72): $subject" >&2
+  exit 1
+fi
+
+exit 0

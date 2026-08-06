@@ -1,0 +1,61 @@
+#!/bin/sh
+# pre-commit hook — fast local checks on the staged changes.
+#
+# Checks:
+#   1. No whitespace errors (trailing whitespace, missing newline at EOF).
+#   2. No merge conflict markers in the diff.
+#   3. No environment/secret/key files can be force-added.
+#   4. No obvious secret material in the added lines.
+#
+# To bypass intentionally (rare):  git commit --no-verify
+
+fail=0
+
+# --- 1. whitespace errors -------------------------------------------------- #
+# NOTE: do NOT add --quiet here — --quiet implies --exit-code, which returns
+# 1 whenever the diff is non-empty (i.e. on every normal commit).
+if ! git diff --cached --check >/dev/null 2>&1; then
+  echo "✖ whitespace errors in staged changes:" >&2
+  git diff --cached --check >&2
+  fail=1
+fi
+
+# --- 2. merge conflict markers --------------------------------------------- #
+# Matches a bare `=======` too (unresolved marker on an empty section).
+if git diff --cached | grep -nE '^(<<<<<<<|=======|>>>>>>>)( |$)' >/dev/null 2>&1; then
+  echo "✖ merge conflict markers detected in staged changes" >&2
+  fail=1
+fi
+
+# --- 3. environment / secret / key files ----------------------------------- #
+# NOTE: filenames containing spaces are not covered by the simple loop below;
+# rename such files (repo convention is kebab-case anyway).
+for f in $(git diff --cached --name-only); do
+  case "$f" in
+    .env|.env.local|.env.development|.env.production|.env.test|.env.staging|.env.*.local)
+      echo "✖ refusing to stage environment file: $f (use .env.example instead)" >&2
+      fail=1
+      ;;
+    *.pem|*.key|*.p12|*.pfx|*.pem.*|*.key.*)
+      echo "✖ refusing to stage private key material: $f" >&2
+      fail=1
+      ;;
+  esac
+done
+
+# --- 4. secret patterns in added lines ------------------------------------- #
+# Only content lines are scanned: `^\+[^+]` skips the `+++ b/<path>` diff
+# headers so filenames can never trigger a false positive.
+SECRET_RE='BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{36}|xox[baprs]-[A-Za-z0-9-]{10,}|sk-[A-Za-z0-9]{20,}'
+if git diff --cached | grep -E '^\+[^+]' | grep -qE "$SECRET_RE"; then
+  echo "✖ possible secret material in staged additions — review before committing:" >&2
+  git diff --cached | grep -E '^\+[^+]' | grep -nE "$SECRET_RE" >&2
+  fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "pre-commit checks failed. See docs/GIT_WORKFLOW.md." >&2
+  exit 1
+fi
+
+exit 0
