@@ -70,6 +70,56 @@ export interface TokenLookup {
   confidence_score: number;
 }
 
+// ---- Security Operations Center (SOC) overview ---- //
+export interface StatusCounts {
+  confirmed_malicious: number;
+  suspicious: number;
+  under_investigation: number;
+  trusted: number;
+}
+
+export interface ThreatLandscape {
+  wallets: StatusCounts;
+  domains: StatusCounts;
+  tokens: StatusCounts;
+}
+
+export interface ModuleStats {
+  anchors: number;
+  soroban_scans: number;
+  sep_validations: number;
+}
+
+export interface NetworkStatus {
+  level: "normal" | "elevated" | "high";
+  label: string;
+  summary: string;
+}
+
+export interface ReportItem {
+  id: string;
+  target_type: string;
+  target_value: string;
+  category: string | null;
+  description: string;
+  evidence_url: string | null;
+  upvotes: number;
+  downvotes: number;
+  status: string;
+  created_at: string;
+}
+
+export interface SocOverview {
+  generated_at: string;
+  network_status: NetworkStatus;
+  landscape: ThreatLandscape;
+  counts: GlobalStats;
+  modules: ModuleStats;
+  active_campaigns: Incident[];
+  latest_threats: LatestThreat[];
+  recent_reports: ReportItem[];
+}
+
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -98,6 +148,10 @@ export function getStats(): Promise<GlobalStats> {
   return request("/stats");
 }
 
+export function getSocOverview(): Promise<SocOverview> {
+  return request("/stats/overview");
+}
+
 export function getLatestThreats(limit = 8): Promise<LatestThreat[]> {
   return request(`/threats/latest?limit=${limit}`);
 }
@@ -120,12 +174,34 @@ export function lookupToken(assetCode: string, issuer: string): Promise<TokenLoo
   return request(`/lookup/token/${encodeURIComponent(assetCode)}/${encodeURIComponent(issuer)}`);
 }
 
+export interface SearchResultItem {
+  entity_type: string;
+  identifier: string;
+  status: string | null;
+  score: number | null;
+  category: string | null;
+  reason: string | null;
+  updated_at: string | null;
+}
+
+export interface SearchResults {
+  query: string;
+  total: number;
+  results: SearchResultItem[];
+}
+
 export interface ReportPayload {
   target_type: string;
   target_value: string;
   category?: string;
   description: string;
   evidence_url?: string;
+}
+
+export function search(query: string, entityType?: string, limit = 20): Promise<SearchResults> {
+  const params = new URLSearchParams({ q: query, limit: String(limit) });
+  if (entityType) params.set("type", entityType);
+  return request(`/search?${params.toString()}`);
 }
 
 export function submitReport(payload: ReportPayload, token?: string): Promise<{ id: string; status: string }> {
