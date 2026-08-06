@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-label="Stellar ThreatNet — Open Threat Intelligence for the Stellar Ecosystem">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="topglow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#0891b2" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1280" height="360" fill="#0d1424"/>
+  <rect width="1280" height="360" fill="url(#topglow)"/>
+
+  <!-- subtle grid -->
+  <g stroke="#38bdf8" stroke-opacity="0.05" stroke-width="1">
+    <path d="M40 0v360 M80 0v360 M120 0v360 M160 0v360 M200 0v360 M240 0v360 M280 0v360 M320 0v360 M360 0v360 M400 0v360 M440 0v360 M480 0v360 M520 0v360 M560 0v360 M600 0v360 M640 0v360 M680 0v360 M720 0v360 M760 0v360 M800 0v360 M840 0v360 M880 0v360 M920 0v360 M960 0v360 M1000 0v360 M1040 0v360 M1080 0v360 M1120 0v360 M1160 0v360 M1200 0v360 M1240 0v360"/>
+    <path d="M0 40h1280 M0 80h1280 M0 120h1280 M0 160h1280 M0 200h1280 M0 240h1280 M0 280h1280 M0 320h1280"/>
+  </g>
+
+  <!-- radar sweep (right side) -->
+  <g transform="translate(1020,180)">
+    <circle r="58" fill="none" stroke="#22d3ee" stroke-opacity="0.14" stroke-width="1.5"/>
+    <circle r="106" fill="none" stroke="#22d3ee" stroke-opacity="0.11" stroke-width="1.5"/>
+    <circle r="154" fill="none" stroke="#22d3ee" stroke-opacity="0.08" stroke-width="1.5"/>
+    <line x1="-170" y1="0" x2="170" y2="0" stroke="#22d3ee" stroke-opacity="0.07"/>
+    <line x1="0" y1="-170" x2="0" y2="170" stroke="#22d3ee" stroke-opacity="0.07"/>
+    <path d="M0 0 L150 -46 A158 158 0 0 1 130 92 Z" fill="url(#sweep)"/>
+    <!-- threat blips -->
+    <circle cx="52" cy="-44" r="4.5" fill="#f43f5e"/>
+    <circle cx="-38" cy="58" r="4" fill="#fbbf24"/>
+    <circle cx="30" cy="96" r="3.5" fill="#fb7185"/>
+    <circle cx="-88" cy="-30" r="3" fill="#f43f5e" fill-opacity="0.7"/>
+  </g>
+
+  <!-- pulse mark -->
+  <g transform="translate(120,180) scale(4.6) translate(-16,-16)">
+    <path d="M8 16h4l2-5 3 10 2-5h5" stroke="url(#g)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="252" y="168" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="60" font-weight="700" fill="#e2e8f0" letter-spacing="-1">Stellar <tspan fill="#22d3ee">ThreatNet</tspan></text>
+  <text x="254" y="212" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="24" font-weight="400" fill="#94a3b8">Open threat intelligence for the Stellar ecosystem</text>
+
+  <!-- tagline pill -->
+  <rect x="254" y="242" width="380" height="34" rx="17" fill="#0f1d33" stroke="#155e75" stroke-opacity="0.6" stroke-width="1"/>
+  <text x="444" y="264" text-anchor="middle" font-family="Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="15" font-weight="600" fill="#67e8f9" letter-spacing="2.5">THREAT INTELLIGENCE PLATFORM</text>
+
+  <!-- accent bar -->
+  <rect x="0" y="356" width="1280" height="4" fill="url(#g)"/>
+</svg>

@@ -1,4 +1,11 @@
-.PHONY: dev down backend frontend test lint contract e2e
+.PHONY: dev down backend frontend test lint contract e2e git-hooks
+
+## Install the repo git hooks (commit-msg + pre-commit). Run once after clone.
+git-hooks:
+	git config core.hooksPath .githooks
+	@chmod +x .githooks/commit-msg .githooks/pre-commit
+	@echo "Git hooks installed from .githooks/ (Conventional Commits + safety checks)."
+	@echo "See docs/GIT_WORKFLOW.md for the full workflow."
 
 ## Start the full stack (Postgres, Redis, API, worker, dashboard)
 dev:

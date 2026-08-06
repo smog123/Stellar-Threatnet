@@ -1,11 +1,19 @@
-# Stellar ThreatNet
+<div align="center">
 
-> **The Open Threat Intelligence Platform for the Stellar Ecosystem.**
+<img src="assets/banner.svg" alt="Stellar ThreatNet — Open Threat Intelligence for the Stellar Ecosystem" width="100%">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI Pipeline](https://github.com/stellar-threatnet/stellar-threatnet/actions/workflows/ci.yml/badge.svg)](https://github.com/stellar-threatnet/stellar-threatnet/actions)
 [![CodeQL Security Audit](https://github.com/stellar-threatnet/stellar-threatnet/actions/workflows/codeql.yml/badge.svg)](https://github.com/stellar-threatnet/stellar-threatnet/actions)
-[![Backend Tests](https://img.shields.io/badge/tests-38%20passing-brightgreen.svg)](backend/tests/)
+[![Backend Tests](https://img.shields.io/badge/tests-45%20passing-brightgreen.svg)](backend/tests/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Community](https://img.shields.io/badge/Community-Discussions-8b5cf6.svg)](https://github.com/stellar-threatnet/stellar-threatnet/discussions)
+
+# Stellar ThreatNet
+
+> **The Open Threat Intelligence Platform for the Stellar Ecosystem.**
+
+</div>
 
 Stellar ThreatNet is the first open-source threat intelligence infrastructure
 dedicated to the Stellar blockchain ecosystem. It collects, validates, scores,
@@ -32,6 +40,9 @@ antivirus. It is the security infrastructure underneath them.
 - [Testing](#-testing)
 - [Documentation](#-documentation)
 - [Contributing](#-contributing)
+- [Community](#-community)
+- [Maintainers](#-maintainers)
+- [Contributors](#-contributors)
 - [Security & Responsible Disclosure](#-security--responsible-disclosure)
 - [License](#-license)
 
@@ -102,7 +113,7 @@ antivirus. It is the security infrastructure underneath them.
 backend/                 FastAPI service (Python 3.11+, async SQLAlchemy, Celery, Redis)
   app/api/v1/            REST endpoints (auth, lookups, incidents, reports, stats, AI)
   app/services/          threat engine, reputation scoring, caching, Celery tasks
-  tests/                 pytest suite (38 tests, in-memory SQLite)
+  tests/                 pytest suite (45 tests, in-memory SQLite)
 contracts/soroban_threatnet/   Soroban on-chain threat hash registry (Rust, SDK 27)
 frontend/                Next.js 14 dashboard (TypeScript, Tailwind)
 cli/                     threatnet CLI (lookup, submit, feed, stats, ai)
@@ -155,6 +166,23 @@ DATABASE_URL=sqlite+aiosqlite:///./dev.db CACHE_ENABLED=false uvicorn app.main:a
 
 > For a PostgreSQL + Redis setup, use `docker compose up -d postgres redis`,
 > then run uvicorn with the default `DATABASE_URL` from `.env`.
+
+### Seed the database (SOC demo data)
+
+The dashboard comes alive with realistic threat intelligence — real publicly
+documented Stellar phishing domains, campaigns, reports, and demo users:
+
+```bash
+cd backend
+# SQLite dev DB (or run without DATABASE_URL against your compose PostgreSQL)
+DATABASE_URL=sqlite+aiosqlite:///./dev.db python -m scripts.seed
+# wipe + reseed (dev only; refuses to run with ENV=production)
+DATABASE_URL=sqlite+aiosqlite:///./dev.db python -m scripts.seed --reset
+```
+
+Demo users are created with password `threatnet-demo` (e.g.
+`admin@stellar-threatnet.org`, `reporter@stellar-threatnet.org`). See
+`backend/scripts/seed.py` for provenance notes.
 
 ### Frontend
 
@@ -292,7 +320,7 @@ Install in dev: open `chrome://extensions`, enable **Developer mode**, click
 ## ✅ Testing
 
 ```bash
-# Backend (38 tests: auth, RBAC, lookups, moderation, scoring, stats, feed)
+# Backend (45 tests: auth, RBAC, lookups, moderation, scoring, stats, SOC, feed)
 cd backend && .venv/bin/python -m pytest -q
 
 # Frontend
@@ -315,6 +343,7 @@ Common tasks are also available via the root `Makefile` (`make test`,
 ## 📚 Documentation
 
 - [Architecture & System Design](docs/ARCHITECTURE.md)
+- [Git Workflow Rules](docs/GIT_WORKFLOW.md)
 - [Threat Intelligence Data Model](docs/THREAT_MODEL.md)
 - [REST API Reference](docs/API.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
@@ -335,6 +364,40 @@ and [Code of Conduct](CODE_OF_CONDUCT.md) first, then grab an issue from
 CI must pass on every pull request (backend tests, frontend build, contract
 tests, CodeQL). Security-relevant changes (auth, scoring, moderation, the
 contract) require two maintainer reviews.
+
+---
+
+## 💬 Community
+
+- **GitHub Discussions** — feature ideas, governance proposals, and ecosystem
+  questions: <https://github.com/stellar-threatnet/stellar-threatnet/discussions>
+- **GitHub Issues** — bug reports and concrete feature requests:
+  <https://github.com/stellar-threatnet/stellar-threatnet/issues>
+- **Security disclosures** — `security@stellar-threatnet.org` (never a public
+  issue; see [SECURITY.md](SECURITY.md)).
+
+---
+
+## 🧑‍💻 Maintainers
+
+| Role | Name | GitHub | Contact |
+| --- | --- | --- | --- |
+| Lead Maintainer | smog123 | [@smog123](https://github.com/smog123) | adejumooluwasegun35@gmail.com |
+| Security Contact | Stellar ThreatNet | — | security@stellar-threatnet.org |
+
+---
+
+## 👥 Contributors
+
+Thanks to everyone who helps secure the Stellar ecosystem — from one-line docs
+fixes to new detection rules:
+
+<a href="https://github.com/stellar-threatnet/stellar-threatnet/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=stellar-threatnet/stellar-threatnet" alt="Contributors" width="400">
+</a>
+
+Want to be on this list? Read [CONTRIBUTING.md](CONTRIBUTING.md) and pick an
+issue from [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md).
 
 ---
 
