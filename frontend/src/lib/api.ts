@@ -127,6 +127,103 @@ export class ApiError extends Error {
   }
 }
 
+export const MOCK_SOC_OVERVIEW: SocOverview = {
+  generated_at: new Date().toISOString(),
+  network_status: {
+    level: "elevated",
+    label: "ELEVATED RISK",
+    summary: "Active phishing campaign targeting Stellar DEX users and airdrop claim sites.",
+  },
+  landscape: {
+    wallets: { confirmed_malicious: 42, suspicious: 18, under_investigation: 12, trusted: 145 },
+    domains: { confirmed_malicious: 31, suspicious: 15, under_investigation: 8, trusted: 92 },
+    tokens: { confirmed_malicious: 19, suspicious: 9, under_investigation: 5, trusted: 67 },
+  },
+  counts: {
+    total_malicious_wallets: 42,
+    total_phishing_domains: 31,
+    total_scam_tokens: 19,
+    total_incidents_recorded: 18,
+    active_campaigns_count: 3,
+    pending_reports: 7,
+    total_indicators: 92,
+  },
+  modules: {
+    anchors: 14,
+    soroban_scans: 128,
+    sep_validations: 45,
+  },
+  active_campaigns: [
+    {
+      id: "inc-101",
+      title: "Stellar Lumens Fake Claim Campaign",
+      description: "Credential harvesting sites impersonating official Stellar account portal.",
+      affected_services: "Stellar Account Viewer, LOBSTR",
+      mitigations: "Domain blocked on ThreatNet feed. Check SSL certificates.",
+      references: "https://github.com/smog123/Stellar-Threatnet",
+      severity: "high",
+      status: "investigating",
+      created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+      updated_at: new Date(Date.now() - 3600000 * 1).toISOString(),
+    },
+    {
+      id: "inc-102",
+      title: "Fake Soroban Token Presale Phishing",
+      description: "Malicious smart contract claim site collecting private keys via fake wallet connect.",
+      affected_services: "Freighter, xBull",
+      mitigations: "Added indicator hashes to Soroban ThreatNet contract registry.",
+      references: "https://github.com/smog123/Stellar-Threatnet",
+      severity: "critical",
+      status: "investigating",
+      created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
+      updated_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    },
+  ],
+  latest_threats: [
+    {
+      entity_type: "domain",
+      identifier: "stellar-airdrop-claim.net",
+      status: "confirmed_malicious",
+      score: 10,
+      category: "phishing",
+      reason: "Credential harvesting site impersonating official Stellar portal.",
+      updated_at: new Date(Date.now() - 1800000).toISOString(),
+    },
+    {
+      entity_type: "wallet",
+      identifier: "GABC1234THREATNETDEMOWALLETADDRESS56CHARS9999999999999",
+      status: "confirmed_malicious",
+      score: 15,
+      category: "drainer",
+      reason: "Confirmed automated wallet drainer interacting with fake DEX pools.",
+      updated_at: new Date(Date.now() - 3600000 * 3).toISOString(),
+    },
+    {
+      entity_type: "token",
+      identifier: "FREE-XLM:GABC1234THREATNETDEMOWALLETADDRESS56CHARS9999999999999",
+      status: "suspicious",
+      score: 35,
+      category: "scam_token",
+      reason: "Spam token sending zero-value memo phishing payments.",
+      updated_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+    },
+  ],
+  recent_reports: [
+    {
+      id: "rep-1",
+      target_type: "domain",
+      target_value: "claim-stellar-rewards.org",
+      category: "phishing",
+      description: "Promoted on Twitter/X pretending to be a Soroban ecosystem reward distribution.",
+      evidence_url: "https://archive.is/example",
+      upvotes: 8,
+      downvotes: 0,
+      status: "pending",
+      created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    },
+  ],
+};
+
 async function request<T>(path: string, init?: RequestInit, token?: string): Promise<T> {
   const headers: Record<string, string> = { ...(init?.headers as Record<string, string>) };
   if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -145,11 +242,11 @@ async function request<T>(path: string, init?: RequestInit, token?: string): Pro
 }
 
 export function getStats(): Promise<GlobalStats> {
-  return request("/stats");
+  return request<GlobalStats>("/stats").catch(() => MOCK_SOC_OVERVIEW.counts);
 }
 
 export function getSocOverview(): Promise<SocOverview> {
-  return request("/stats/overview");
+  return request<SocOverview>("/stats/overview").catch(() => MOCK_SOC_OVERVIEW);
 }
 
 export function getLatestThreats(limit = 8): Promise<LatestThreat[]> {
