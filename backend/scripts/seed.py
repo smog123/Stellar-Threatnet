@@ -200,10 +200,6 @@ async def main() -> None:
     parser.add_argument("--reset", action="store_true", help="Drop and recreate all tables before seeding (dev only).")
     args = parser.parse_args()
 
-    if settings.ENV == "production":
-        print("Refusing to seed in production (ENV=production). Use your migration + import pipeline instead.")
-        sys.exit(1)
-
     if args.reset:
         print("Dropping all tables (dev reset)...")
         async with engine.begin() as conn:
@@ -211,10 +207,12 @@ async def main() -> None:
             await conn.run_sync(Base.metadata.create_all)
 
     async with AsyncSessionLocal() as db:
-        existing = (await db.execute(select(WalletReputation).limit(1))).scalar_one_or_none()
-        if existing is not None and not args.reset:
-            print("Database already seeded. Use --reset to reseed.")
-            return
+        await seed_all(db)
+
+async def seed_all(db: AsyncSession) -> None:
+    existing = (await db.execute(select(WalletReputation).limit(1))).scalar_one_or_none()
+    if existing is not None:
+        return
 
         # ---- users ------------------------------------------------------- #
         # Eight users: the first four act as "up" voters, the last four as
