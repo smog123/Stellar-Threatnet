@@ -13,6 +13,6 @@
   "keywords": ["stellar", "threat", "intelligence", "security", "phishing"],
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.4.0"
+    "typescript": "^7.0.2"
   }
 }
