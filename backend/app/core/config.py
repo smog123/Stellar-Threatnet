@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     AI_PROVIDER: str = "mock"  # mock | openai | anthropic | ollama
     OPENAI_API_KEY: str = ""
 
+    # --- Stellar Horizon (live on-chain lookups) ---
+    STELLAR_HORIZON_URL: str = "https://horizon.stellar.org"
+    HORIZON_TIMEOUT_SECONDS: float = 6.0
+
     # --- Reputation scoring (see docs/THREAT_MODEL.md) ---
     BASE_REPUTATION_SCORE: int = 80
     VERIFIED_BOOST: int = 20

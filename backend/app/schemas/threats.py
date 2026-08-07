@@ -46,6 +46,37 @@ class TokenLookupResponse(BaseModel):
 
 
 # --------------------------------------------------------------------------- #
+# Live on-chain wallet profile (Stellar Horizon)
+# --------------------------------------------------------------------------- #
+class OnChainProfile(BaseModel):
+    """Facts read directly from Horizon for an account (no threat opinion)."""
+    exists: bool
+    funded: bool
+    native_balance: Optional[str] = None
+    account_age_days: Optional[int] = None
+    num_subentries: Optional[int] = None
+    trustline_count: Optional[int] = None
+    signer_count: Optional[int] = None
+    thresholds_high: Optional[int] = None
+    home_domain: Optional[str] = None
+    has_home_domain: bool = False
+
+
+class WalletOnChainResponse(BaseModel):
+    """Heuristic verdict for a wallet NOT in the threat DB, derived from live
+    on-chain signal. `verdict` is intentionally soft ("no reports" is not proof
+    of safety) — see docs/THREAT_MODEL.md.
+    """
+    address: str
+    source: str = "stellar_horizon"
+    verdict: str  # unknown_new | unknown_established | unfunded | not_found | unavailable
+    risk_level: str  # info | caution | neutral
+    summary: str
+    signals: List[str] = []
+    profile: Optional[OnChainProfile] = None
+
+
+# --------------------------------------------------------------------------- #
 # Incidents
 # --------------------------------------------------------------------------- #
 class IncidentResponse(BaseModel):

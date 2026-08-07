@@ -259,8 +259,35 @@ export function getIncidents(status?: string, limit = 10, offset = 0): Promise<I
   return request(`/incidents?${params.toString()}`);
 }
 
+export interface OnChainProfile {
+  exists: boolean;
+  funded: boolean;
+  native_balance: string | null;
+  account_age_days: number | null;
+  num_subentries: number | null;
+  trustline_count: number | null;
+  signer_count: number | null;
+  thresholds_high: number | null;
+  home_domain: string | null;
+  has_home_domain: boolean;
+}
+
+export interface WalletOnChain {
+  address: string;
+  source: string;
+  verdict: "unknown_new" | "unknown_established" | "unfunded" | "not_found" | "unavailable";
+  risk_level: "info" | "caution" | "neutral";
+  summary: string;
+  signals: string[];
+  profile: OnChainProfile | null;
+}
+
 export function lookupWallet(address: string): Promise<WalletLookup> {
   return request(`/lookup/wallet/${encodeURIComponent(address)}`);
+}
+
+export function lookupWalletOnChain(address: string): Promise<WalletOnChain> {
+  return request(`/lookup/wallet/${encodeURIComponent(address)}/onchain`);
 }
 
 export function lookupDomain(domain: string): Promise<DomainLookup> {
