@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     STELLAR_HORIZON_URL: str = "https://horizon.stellar.org"
     HORIZON_TIMEOUT_SECONDS: float = 6.0
 
+    # --- Live ingestor ---
+    # Streams Horizon payment ops and flags threats in real time. Off by default
+    # so local dev and the test suite don't open a live stream; opt in via env.
+    INGESTOR_ENABLED: bool = False
+
     # --- Reputation scoring (see docs/THREAT_MODEL.md) ---
     BASE_REPUTATION_SCORE: int = 80
     VERIFIED_BOOST: int = 20

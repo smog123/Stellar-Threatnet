@@ -36,7 +36,23 @@ async def lifespan(_: FastAPI):
                 await seed_all(db)
     except Exception as e:
         print(f"Startup seeding notice: {e}")
+
+    # Launch the live Horizon ingestor (opt-in via INGESTOR_ENABLED).
+    if settings.INGESTOR_ENABLED:
+        try:
+            from app.services.ingestor import start_ingestor
+            await start_ingestor()
+        except Exception as e:
+            print(f"Ingestor startup notice: {e}")
+
     yield
+
+    if settings.INGESTOR_ENABLED:
+        try:
+            from app.services.ingestor import stop_ingestor
+            await stop_ingestor()
+        except Exception as e:
+            print(f"Ingestor shutdown notice: {e}")
 
 
 app = FastAPI(

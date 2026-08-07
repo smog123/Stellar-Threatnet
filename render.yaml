@@ -17,6 +17,8 @@ services:
         value: "false"
       - key: RATE_LIMIT_ENABLED
         value: "true"
+      - key: INGESTOR_ENABLED
+        value: "true"
       - key: CORS_ORIGINS
         value: '["https://stellar-threatnet.vercel.app","https://frontend-rosy-five-50.vercel.app","http://localhost:3000"]'
 
