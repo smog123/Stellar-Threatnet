@@ -205,6 +205,12 @@ async def main() -> None:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
+    else:
+        # Ensure tables exist so a standalone `python -m scripts.seed` works
+        # against a brand-new database (e.g. the Render start command runs
+        # this before the app's own startup table creation).
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
 
     async with AsyncSessionLocal() as db:
         await seed_all(db)
@@ -335,10 +341,12 @@ async def seed_all(db: AsyncSession) -> None:
         report_ids.append(report.id)
         # Up voters and down voters come from disjoint pools, so the
         # unique (report_id, voter_id) constraint can never be violated.
+        # Attach votes via the relationship so the unit-of-work always
+        # inserts the parent report before its votes (FK-safe on Postgres).
         for v in range(min(up, len(up_voter_ids))):
-            db.add(Vote(id=new_id("VOT"), report_id=report.id, voter_id=up_voter_ids[v], is_up=True))
+            report.votes.append(Vote(id=new_id("VOT"), voter_id=up_voter_ids[v], is_up=True))
         for v in range(min(down, len(down_voter_ids))):
-            db.add(Vote(id=new_id("VOT"), report_id=report.id, voter_id=down_voter_ids[v], is_up=False))
+            report.votes.append(Vote(id=new_id("VOT"), voter_id=down_voter_ids[v], is_up=False))
 
     # ---- evidence ------------------------------------------------------ #
     evidence = [
