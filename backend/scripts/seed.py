@@ -214,189 +214,189 @@ async def seed_all(db: AsyncSession) -> None:
     if existing is not None:
         return
 
-        # ---- users ------------------------------------------------------- #
-        # Eight users: the first four act as "up" voters, the last four as
-        # "down" voters, so no voter can ever vote both ways on one report
-        # (unique constraint: report_id + voter_id).
-        users = [
-            User(id="USR-ADMIN000001", email="admin@stellar-threatnet.org", full_name="ThreatNet Admin", role=UserRole.ADMIN, is_active=True),
-            User(id="USR-ANLYST0001", email="analyst@stellar-threatnet.org", full_name="Analyst", role=UserRole.ANALYST, is_active=True),
-            User(id="USR-MODRT00001", email="moderator@stellar-threatnet.org", full_name="Moderator", role=UserRole.MODERATOR, is_active=True),
-            User(id="USR-RPTR000001", email="reporter@stellar-threatnet.org", full_name="Community Reporter", role=UserRole.REPORTER, is_active=True),
-            User(id="USR-RPTR000002", email="reporter.bob@stellar-threatnet.org", full_name="Bob", role=UserRole.REPORTER, is_active=True),
-            User(id="USR-ANLYST0002", email="analyst.carol@stellar-threatnet.org", full_name="Carol", role=UserRole.ANALYST, is_active=True),
-            User(id="USR-MODRT00002", email="moderator.dave@stellar-threatnet.org", full_name="Dave", role=UserRole.MODERATOR, is_active=True),
-            User(id="USR-RPTR000003", email="reporter.eve@stellar-threatnet.org", full_name="Eve", role=UserRole.REPORTER, is_active=True),
-        ]
-        for u in users:
-            u.hashed_password = hash_password(DEMO_PASSWORD)
-            db.add(u)
+    # ---- users ------------------------------------------------------- #
+    # Eight users: the first four act as "up" voters, the last four as
+    # "down" voters, so no voter can ever vote both ways on one report
+    # (unique constraint: report_id + voter_id).
+    users = [
+        User(id="USR-ADMIN000001", email="admin@stellar-threatnet.org", full_name="ThreatNet Admin", role=UserRole.ADMIN, is_active=True),
+        User(id="USR-ANLYST0001", email="analyst@stellar-threatnet.org", full_name="Analyst", role=UserRole.ANALYST, is_active=True),
+        User(id="USR-MODRT00001", email="moderator@stellar-threatnet.org", full_name="Moderator", role=UserRole.MODERATOR, is_active=True),
+        User(id="USR-RPTR000001", email="reporter@stellar-threatnet.org", full_name="Community Reporter", role=UserRole.REPORTER, is_active=True),
+        User(id="USR-RPTR000002", email="reporter.bob@stellar-threatnet.org", full_name="Bob", role=UserRole.REPORTER, is_active=True),
+        User(id="USR-ANLYST0002", email="analyst.carol@stellar-threatnet.org", full_name="Carol", role=UserRole.ANALYST, is_active=True),
+        User(id="USR-MODRT00002", email="moderator.dave@stellar-threatnet.org", full_name="Dave", role=UserRole.MODERATOR, is_active=True),
+        User(id="USR-RPTR000003", email="reporter.eve@stellar-threatnet.org", full_name="Eve", role=UserRole.REPORTER, is_active=True),
+    ]
+    for u in users:
+        u.hashed_password = hash_password(DEMO_PASSWORD)
+        db.add(u)
 
-        # ---- wallet reputations ------------------------------------------ #
-        wallets = []
-        for i, (seed_name, category, score, status_cat) in enumerate(WALLETS):
-            is_verified = score >= 90
-            status = ThreatStatus.TRUSTED if is_verified else (
-                ThreatStatus.CONFIRMED_MALICIOUS if score <= 20 else (
-                    ThreatStatus.SUSPICIOUS if score <= 50 else ThreatStatus.UNDER_INVESTIGATION
-                )
+    # ---- wallet reputations ------------------------------------------ #
+    wallets = []
+    for i, (seed_name, category, score, status_cat) in enumerate(WALLETS):
+        is_verified = score >= 90
+        status = ThreatStatus.TRUSTED if is_verified else (
+            ThreatStatus.CONFIRMED_MALICIOUS if score <= 20 else (
+                ThreatStatus.SUSPICIOUS if score <= 50 else ThreatStatus.UNDER_INVESTIGATION
             )
-            wallets.append(
-                WalletReputation(
-                    address=_wallet(seed_name),
-                    reputation_score=score,
-                    status=status,
-                    category=category,
-                    reason=f"{seed_name}. Source: publicly documented {status_cat} activity.",
-                    is_verified=is_verified,
-                    report_count=12 if status == ThreatStatus.CONFIRMED_MALICIOUS else 3,
-                    last_updated=datetime.utcnow() - timedelta(hours=i),
-                )
-            )
-        for w in wallets:
-            db.add(w)
-
-        # ---- domain reputations ------------------------------------------ #
-        domains = []
-        for i, (display, puny, category, confidence, reason) in enumerate(PHISHING_DOMAINS):
-            domains.append(
-                DomainReputation(
-                    domain_name=puny,
-                    confidence_score=confidence,
-                    status=ThreatStatus.CONFIRMED_MALICIOUS if confidence >= 0.88 else ThreatStatus.SUSPICIOUS,
-                    category=category,
-                    reason=f"{reason} Display form: {display}",
-                    first_detected=datetime.utcnow() - timedelta(days=30 - i),
-                    last_updated=datetime.utcnow() - timedelta(hours=i),
-                )
-            )
-        for d in domains:
-            db.add(d)
-
-        # ---- token reputations ------------------------------------------- #
-        tokens = []
-        for i, (code, category, confidence, reason) in enumerate(TOKENS):
-            tokens.append(
-                TokenReputation(
-                    asset_identifier=f"{code}:{_issuer(code)}",
-                    asset_code=code,
-                    issuer_address=_issuer(code),
-                    status=ThreatStatus.CONFIRMED_MALICIOUS if confidence >= 0.88 else ThreatStatus.SUSPICIOUS,
-                    category=category,
-                    reason=reason,
-                    confidence_score=confidence,
-                    created_at=datetime.utcnow() - timedelta(days=20 - i),
-                )
-            )
-        for t in tokens:
-            db.add(t)
-
-        # ---- incidents ---------------------------------------------------- #
-        for i, (title, desc, affected, mitigations, severity, status, refs) in enumerate(INCIDENTS):
-            db.add(
-                Incident(
-                    id=new_id("INC"),
-                    title=title,
-                    description=desc,
-                    affected_services=affected,
-                    mitigations=mitigations,
-                    references=refs,
-                    severity=severity,
-                    status=status,
-                    author_id="USR-ANLYST0001",
-                    created_at=datetime.utcnow() - timedelta(days=14 - i),
-                    updated_at=datetime.utcnow() - timedelta(hours=i * 3),
-                )
-            )
-
-        # ---- community reports + votes ------------------------------------ #
-        up_voter_ids = ["USR-RPTR000001", "USR-ANLYST0001", "USR-MODRT00001", "USR-ADMIN000001"]
-        down_voter_ids = ["USR-RPTR000002", "USR-ANLYST0002", "USR-MODRT00002", "USR-RPTR000003"]
-        report_ids = []
-        for i, (target_type, target_value, category, desc, status, up, down) in enumerate(REPORTS):
-            value = target_value if target_value else _wallet(f"report{i}")
-            if target_type == "token":
-                value = f"FAKE{category.split()[0].upper()}:{_issuer('report-token')}"
-            report = CommunityReport(
-                id=new_id("REP"),
-                reporter_id="USR-RPTR000001",
-                target_type=target_type,
-                target_value=value,
-                category=category,
-                description=desc,
+        )
+        wallets.append(
+            WalletReputation(
+                address=_wallet(seed_name),
+                reputation_score=score,
                 status=status,
-                upvotes=up,
-                downvotes=down,
-                moderator_id="USR-MODRT00001" if status != ReportStatus.PENDING else None,
-                moderated_at=datetime.utcnow() if status != ReportStatus.PENDING else None,
-                created_at=datetime.utcnow() - timedelta(hours=i * 5),
+                category=category,
+                reason=f"{seed_name}. Source: publicly documented {status_cat} activity.",
+                is_verified=is_verified,
+                report_count=12 if status == ThreatStatus.CONFIRMED_MALICIOUS else 3,
+                last_updated=datetime.utcnow() - timedelta(hours=i),
             )
-            db.add(report)
-            report_ids.append(report.id)
-            # Up voters and down voters come from disjoint pools, so the
-            # unique (report_id, voter_id) constraint can never be violated.
-            for v in range(min(up, len(up_voter_ids))):
-                db.add(Vote(id=new_id("VOT"), report_id=report.id, voter_id=up_voter_ids[v], is_up=True))
-            for v in range(min(down, len(down_voter_ids))):
-                db.add(Vote(id=new_id("VOT"), report_id=report.id, voter_id=down_voter_ids[v], is_up=False))
+        )
+    for w in wallets:
+        db.add(w)
 
-        # ---- evidence ------------------------------------------------------ #
-        evidence = [
-            Evidence(
-                id=new_id("EVI"),
-                wallet_address=wallets[0].address,
-                proof_type="onchain_proof",
-                proof_url="https://stellar.expert/tx/demo-claim-scam-1",
-                description="Confirmed drainer behavior across multiple accounts.",
-                confidence=1.0,
-                submitted_by="USR-ANLYST0001",
-            ),
-            Evidence(
-                id=new_id("EVI"),
-                domain_name="getxlm.org",
-                proof_type="domain_screenshot",
-                proof_url="https://github.com/stellar-threatnet/threatnet/blob/main/docs/screenshots/getxlm.png",
-                description="Screenshot of claim landing page harvesting keys.",
-                confidence=0.9,
-                submitted_by="USR-ANLYST0001",
-            ),
-            Evidence(
-                id=new_id("EVI"),
-                domain_name="xn--stellr-mta.com",
-                proof_type="multi_source",
-                proof_url="https://stellar.org/security",
-                description="Homograph domain flagged across brand-protection feeds.",
-                confidence=0.9,
-                submitted_by="USR-ANLYST0001",
-            ),
-            Evidence(
-                id=new_id("EVI"),
-                token_identifier=tokens[0].asset_identifier,
-                proof_type="payload_sample",
-                proof_url="https://stellar.expert/tx/demo-usdc-impersonation",
-                description="Asset memo payload mimicking Circle USDC.",
-                confidence=0.85,
-                submitted_by="USR-ANLYST0001",
-            ),
-        ]
-        for ev in evidence:
-            db.add(ev)
+    # ---- domain reputations ------------------------------------------ #
+    domains = []
+    for i, (display, puny, category, confidence, reason) in enumerate(PHISHING_DOMAINS):
+        domains.append(
+            DomainReputation(
+                domain_name=puny,
+                confidence_score=confidence,
+                status=ThreatStatus.CONFIRMED_MALICIOUS if confidence >= 0.88 else ThreatStatus.SUSPICIOUS,
+                category=category,
+                reason=f"{reason} Display form: {display}",
+                first_detected=datetime.utcnow() - timedelta(days=30 - i),
+                last_updated=datetime.utcnow() - timedelta(hours=i),
+            )
+        )
+    for d in domains:
+        db.add(d)
 
-        # ---- demo API key + audit trail ------------------------------------ #
-        plain_key, _ = await ThreatService.create_api_key(db, users[0], "demo-admin-key")
-        print(f"  demo API key : {plain_key}")
+    # ---- token reputations ------------------------------------------- #
+    tokens = []
+    for i, (code, category, confidence, reason) in enumerate(TOKENS):
+        tokens.append(
+            TokenReputation(
+                asset_identifier=f"{code}:{_issuer(code)}",
+                asset_code=code,
+                issuer_address=_issuer(code),
+                status=ThreatStatus.CONFIRMED_MALICIOUS if confidence >= 0.88 else ThreatStatus.SUSPICIOUS,
+                category=category,
+                reason=reason,
+                confidence_score=confidence,
+                created_at=datetime.utcnow() - timedelta(days=20 - i),
+            )
+        )
+    for t in tokens:
+        db.add(t)
 
+    # ---- incidents ---------------------------------------------------- #
+    for i, (title, desc, affected, mitigations, severity, status, refs) in enumerate(INCIDENTS):
         db.add(
-            AuditLog(
-                id=new_id("AUD"),
-                actor_id="USR-ADMIN000001",
-                action="SEED_DATA_LOADED",
-                target="database",
-                details="Development seed script executed with realistic threat intelligence data.",
+            Incident(
+                id=new_id("INC"),
+                title=title,
+                description=desc,
+                affected_services=affected,
+                mitigations=mitigations,
+                references=refs,
+                severity=severity,
+                status=status,
+                author_id="USR-ANLYST0001",
+                created_at=datetime.utcnow() - timedelta(days=14 - i),
+                updated_at=datetime.utcnow() - timedelta(hours=i * 3),
             )
         )
 
-        await db.commit()
+    # ---- community reports + votes ------------------------------------ #
+    up_voter_ids = ["USR-RPTR000001", "USR-ANLYST0001", "USR-MODRT00001", "USR-ADMIN000001"]
+    down_voter_ids = ["USR-RPTR000002", "USR-ANLYST0002", "USR-MODRT00002", "USR-RPTR000003"]
+    report_ids = []
+    for i, (target_type, target_value, category, desc, status, up, down) in enumerate(REPORTS):
+        value = target_value if target_value else _wallet(f"report{i}")
+        if target_type == "token":
+            value = f"FAKE{category.split()[0].upper()}:{_issuer('report-token')}"
+        report = CommunityReport(
+            id=new_id("REP"),
+            reporter_id="USR-RPTR000001",
+            target_type=target_type,
+            target_value=value,
+            category=category,
+            description=desc,
+            status=status,
+            upvotes=up,
+            downvotes=down,
+            moderator_id="USR-MODRT00001" if status != ReportStatus.PENDING else None,
+            moderated_at=datetime.utcnow() if status != ReportStatus.PENDING else None,
+            created_at=datetime.utcnow() - timedelta(hours=i * 5),
+        )
+        db.add(report)
+        report_ids.append(report.id)
+        # Up voters and down voters come from disjoint pools, so the
+        # unique (report_id, voter_id) constraint can never be violated.
+        for v in range(min(up, len(up_voter_ids))):
+            db.add(Vote(id=new_id("VOT"), report_id=report.id, voter_id=up_voter_ids[v], is_up=True))
+        for v in range(min(down, len(down_voter_ids))):
+            db.add(Vote(id=new_id("VOT"), report_id=report.id, voter_id=down_voter_ids[v], is_up=False))
+
+    # ---- evidence ------------------------------------------------------ #
+    evidence = [
+        Evidence(
+            id=new_id("EVI"),
+            wallet_address=wallets[0].address,
+            proof_type="onchain_proof",
+            proof_url="https://stellar.expert/tx/demo-claim-scam-1",
+            description="Confirmed drainer behavior across multiple accounts.",
+            confidence=1.0,
+            submitted_by="USR-ANLYST0001",
+        ),
+        Evidence(
+            id=new_id("EVI"),
+            domain_name="getxlm.org",
+            proof_type="domain_screenshot",
+            proof_url="https://github.com/stellar-threatnet/threatnet/blob/main/docs/screenshots/getxlm.png",
+            description="Screenshot of claim landing page harvesting keys.",
+            confidence=0.9,
+            submitted_by="USR-ANLYST0001",
+        ),
+        Evidence(
+            id=new_id("EVI"),
+            domain_name="xn--stellr-mta.com",
+            proof_type="multi_source",
+            proof_url="https://stellar.org/security",
+            description="Homograph domain flagged across brand-protection feeds.",
+            confidence=0.9,
+            submitted_by="USR-ANLYST0001",
+        ),
+        Evidence(
+            id=new_id("EVI"),
+            token_identifier=tokens[0].asset_identifier,
+            proof_type="payload_sample",
+            proof_url="https://stellar.expert/tx/demo-usdc-impersonation",
+            description="Asset memo payload mimicking Circle USDC.",
+            confidence=0.85,
+            submitted_by="USR-ANLYST0001",
+        ),
+    ]
+    for ev in evidence:
+        db.add(ev)
+
+    # ---- demo API key + audit trail ------------------------------------ #
+    plain_key, _ = await ThreatService.create_api_key(db, users[0], "demo-admin-key")
+    print(f"  demo API key : {plain_key}")
+
+    db.add(
+        AuditLog(
+            id=new_id("AUD"),
+            actor_id="USR-ADMIN000001",
+            action="SEED_DATA_LOADED",
+            target="database",
+            details="Development seed script executed with realistic threat intelligence data.",
+        )
+    )
+
+    await db.commit()
 
     print("Seeded:")
     print(f"  users     : {len(users)} (password: {DEMO_PASSWORD})")
