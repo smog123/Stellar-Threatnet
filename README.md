@@ -165,7 +165,7 @@ $$S(E) = \max\left(0, \min\left(100, 80 - \sum (W_i \times C_i) + 20 \cdot \math
 
 ## ⛓️ Soroban Smart Contract (On-Chain Registry)
 
-Located in `contracts/soroban_threatnet/`, the Soroban smart contract allows zero-trust clients to verify indicator hashes directly on the Stellar ledger.
+The Soroban smart contract allows zero-trust clients to verify indicator hashes directly on the Stellar ledger. It lives in its own repository — **`stellar-threatnet-contract`** (Rust, soroban-sdk 27, wasm target `wasm32v1-none`) — and is tracked here via the interface in [`docs/wave/APP_AGENT_SYSTEM_PROMPT.md`](docs/wave/APP_AGENT_SYSTEM_PROMPT.md). The authoritative spec is [`SPEC.md`](https://github.com/smog123/stellar-threatnet-contract/blob/main/SPEC.md).
 
 ### **Contract Methods**
 - `initialize(admin: Address)` — Sets the admin authority (single execution safety).
@@ -179,8 +179,11 @@ Located in `contracts/soroban_threatnet/`, the Soroban smart contract allows zer
 
 ## 📁 Repository Structure
 
+This is the **application repository** (`stellar-threatnet-app`). The Soroban
+contract lives in its own repository: [`stellar-threatnet-contract`](https://github.com/smog123/stellar-threatnet-contract).
+
 ```
-stellar-threatnet/
+stellar-threatnet-app/
 ├── backend/                 # FastAPI service (Python 3.11+, async SQLAlchemy, Celery)
 │   ├── app/api/v1/          # REST API endpoints (auth, lookups, incidents, reports, stats)
 │   ├── app/core/            # Config, security, JWT, rate limiting
@@ -188,14 +191,14 @@ stellar-threatnet/
 │   ├── app/schemas/         # Pydantic schemas
 │   ├── app/services/        # Threat scoring engine, cache, tasks
 │   └── tests/               # Pytest suite (45 unit & integration tests)
-├── contracts/               # Soroban threat indicator hash registry (Rust, SDK 27)
 ├── frontend/                # Next.js 14 dashboard (TypeScript, Tailwind CSS)
 ├── cli/                     # Official `threatnet` terminal CLI tool
 ├── sdks/                    # Client SDKs
 │   ├── python/              # Python SDK
 │   └── javascript/          # TypeScript / JavaScript SDK
 ├── browser-extension/       # Manifest V3 Chrome extension
-├── docs/                    # Deep-dive documentation (Architecture, Threat Model, API)
+├── docs/                    # Deep-dive documentation (Architecture, Threat Model, API, wave/)
+├── scripts/                 # Repo tooling (issue generation, branch protection)
 ├── assets/                  # Logos and branding SVGs
 ├── render.yaml              # 1-Click Render cloud deployment blueprint
 ├── docker-compose.yml       # Production Docker Compose orchestration
@@ -407,6 +410,20 @@ We welcome contributions from security researchers, Rust/Python/TypeScript engin
 
 Stellar ThreatNet is open-source software released under the [MIT License](LICENSE).
 
-* **Lead Maintainer:** smog123 ([@smog123](https://github.com/smog123))
-* **Repository:** [https://github.com/smog123/Stellar-Threatnet](https://github.com/smog123/Stellar-Threatnet)
+### Related Repositories
+
+* **App (this repo):** [github.com/smog123/stellar-threatnet-app](https://github.com/smog123/stellar-threatnet-app)
+* **Contract:** [github.com/smog123/stellar-threatnet-contract](https://github.com/smog123/stellar-threatnet-contract) — Soroban on-chain indicator registry
+
+### Maintainers
+
+| Role | Handle | Contact |
+| --- | --- | --- |
+| Lead Maintainer | [@smog123](https://github.com/smog123) | [GitHub](https://github.com/smog123) |
+
+### Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=smog123/stellar-threatnet-app)](https://github.com/smog123/stellar-threatnet-app/graphs/contributors)
+
 * **Live Dashboard:** [https://frontend-rosy-five-50.vercel.app](https://frontend-rosy-five-50.vercel.app)
+* **Live API Docs:** [https://stellar-threatnet-api.onrender.com/docs](https://stellar-threatnet-api.onrender.com/docs)
