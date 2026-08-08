@@ -16,16 +16,16 @@ if ! gh auth status >/dev/null 2>&1; then
   exit 1
 fi
 
-gh repo edit "$REPO" \
-  --add-topic stellar \
-  --add-topic soroban \
-  --add-topic threat-intelligence \
-  --add-topic blockchain-security \
-  --add-topic phishing-protection \
-  --add-topic osint \
-  --add-topic cybersecurity \
-  --add-topic security \
-  --add-topic fastapi \
-  --add-topic web3
+# Contract repos get Rust/Soroban-flavored topics; the app repo gets the
+# full application-oriented set.
+if [[ "$REPO" == *-contract ]]; then
+  topics=(stellar soroban threat-intelligence blockchain-security phishing-protection security rust web3)
+else
+  topics=(stellar soroban threat-intelligence blockchain-security phishing-protection osint cybersecurity security fastapi web3)
+fi
+
+args=()
+for t in "${topics[@]}"; do args+=(--add-topic "$t"); done
+gh repo edit "$REPO" "${args[@]}"
 
 echo "topics added to ${REPO}."

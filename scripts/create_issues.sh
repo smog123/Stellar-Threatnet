@@ -25,10 +25,27 @@ usage() {
   exit 1
 }
 
+# Ensure every label we attach exists (idempotent; creates if missing).
+ensure_labels() {
+  local repo="$1"; shift
+  for label in "$@"; do
+    "$GH" label create "$label" --repo "$repo" --force >/dev/null 2>&1 || true
+  done
+}
+
+# Exact-title existence check. A GitHub search query cannot reliably match
+# titles containing parentheses/colons (e.g. `feat(frontend): ...`), so match
+# against the full issue-title list instead.
+issue_exists() {
+  local repo="$1" title="$2"
+  "$GH" issue list --repo "$repo" --state all --limit 100 --json title --jq '.[].title' 2>/dev/null \
+    | grep -Fxq "$title"
+}
+
 # $1 = repo, $2 = title, $3 = body, $4 = labels (comma-separated)
 create_issue() {
   local repo="$1" title="$2" body="$3" labels="$4"
-  if "$GH" issue list --repo "$repo" --search "in:title \"${title}\"" --state all --json number --jq 'length' | grep -q '^[1-9]'; then
+  if issue_exists "$repo" "$title"; then
     echo "skip (exists): ${title}"
     return 0
   fi
@@ -44,6 +61,7 @@ create_issue() {
 # ---------------- App repo issues ----------------
 app_issues() {
   local repo="$1" body
+  ensure_labels "$repo" backend sdk frontend cli test extension
 
   body=$(cat <<'EOF'
 ## Summary
@@ -198,6 +216,7 @@ EOF
 # ---------------- Contract repo issues ----------------
 contract_issues() {
   local repo="$1" body
+  ensure_labels "$repo" contract security test chore
 
   body=$(cat <<'EOF'
 ## Summary
