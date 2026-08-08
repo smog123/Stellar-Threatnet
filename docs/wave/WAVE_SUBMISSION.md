@@ -1,7 +1,7 @@
 # Drips Wave for Stellar — Submission Pack
 
-Status: **ready to submit — all prerequisites verified live 2026-08-08**.
-The only remaining actions are user-side (record the demo video; run the
+Status: **ready for the submission steps — verified live 2026-08-08**.
+Only user-side actions remain (record the demo video below; run the
 in-app submission flow at https://www.drips.network/app).
 
 ---
@@ -90,7 +90,7 @@ Run `./scripts/create_issues.sh --app <owner>/stellar-threatnet-app` and
       `DEMO_VIDEO_SCRIPT.md` (shot list with real URLs, seeded addresses, and
       voiceover). Script is ready; recording is the last remaining user action.
 
-## 7. How to submit (verified 2026-08-08 — user-side actions)
+## 6. How to submit (verified 2026-08-08 — user-side actions)
 
 The Stellar Wave application is an **in-app onboarding flow**, not an email or
 form. Steps (per Drips docs, `docs.drips.network/wave`):
@@ -121,7 +121,7 @@ Notes:
   signal for the "planned issues" description and give contributors scoped
   entry points.
 
-## 6. Post-approval iteration policy (Phase 13)
+## 7. Post-approval iteration policy (Phase 13)
 
 Treat every new gap the same way:
 
