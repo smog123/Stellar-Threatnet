@@ -31,9 +31,10 @@ test:
 lint:
 	cd frontend && npm run lint && npx tsc --noEmit
 
-## Soroban contract tests
+## Soroban contract tests (run in the stellar-threatnet-contract repo)
 contract:
-	cd contracts/soroban_threatnet && cargo test
+	@echo "Soroban contract lives in stellar-threatnet-contract:"
+	@echo "  git clone https://github.com/smog123/stellar-threatnet-contract.git && cargo test"
 
 ## End-to-end smoke test (backend on :8000 must be running)
 e2e:

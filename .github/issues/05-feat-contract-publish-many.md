@@ -3,8 +3,8 @@
 ## Summary
 
 Add `publish_many(admin: Address, hashes: Vec<BytesN<32>>, levels: Vec<u32>,
-scores: Vec<u32>)` to `contracts/soroban_threatnet/src/lib.rs` for batched
-on-chain indicator updates behind a single auth check.
+scores: Vec<u32>)` to `src/lib.rs` (in the **stellar-threatnet-contract**
+repo) for batched on-chain indicator updates behind a single auth check.
 
 ## Why it matters
 

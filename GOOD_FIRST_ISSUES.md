@@ -18,8 +18,9 @@ the `good first issue` label.
 
 ## Soroban contract (Rust)
 
-- **Bulk publish** — add `publish_many` to
-  `contracts/soroban_threatnet/src/lib.rs` for batched indicator updates.
+- **Bulk publish** — add `publish_many` to `src/lib.rs` in the
+  [stellar-threatnet-contract](https://github.com/smog123/stellar-threatnet-contract)
+  repo for batched indicator updates.
 - **Event emission** — emit Soroban events on publish for indexers.
 - **Round-trip integration test** — exercise `publish` → `get` against a local
   Soroban sandbox as a CI job.

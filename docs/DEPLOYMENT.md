@@ -70,15 +70,17 @@ Services:
 
 ## Soroban contract deployment
 
+The contract lives in the separate **`stellar-threatnet-contract`** repository.
+
 ```bash
-cd contracts/soroban_threatnet
+git clone https://github.com/smog123/stellar-threatnet-contract.git
+cd stellar-threatnet-contract
 rustup target add wasm32v1-none
 cargo build --target wasm32v1-none --release
-# deploy with soroban-cli (scripts/deploy.sh), then call initialize(admin)
+./scripts/deploy.sh   # deploy + initialize in dependency order, prints contract IDs
 ```
 
 The contract stores SHA-256 hashes of confirmed indicators on-ledger for
-zero-trust client verification. The contract now lives in the separate
-`stellar-threatnet-contract` repository — see its `README.md` and `SPEC.md`.
+zero-trust client verification. See its `README.md` and `SPEC.md`.
 For the full hosting picture (frontend on Vercel, backend + DB on Render),
 see [docs/WAVE_TOPOLOGY.md](WAVE_TOPOLOGY.md).

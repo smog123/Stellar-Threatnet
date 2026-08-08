@@ -3,17 +3,17 @@
 <img src="assets/banner.svg" alt="Stellar ThreatNet — Open Threat Intelligence for the Stellar Ecosystem" width="100%">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![CI Pipeline](https://github.com/smog123/Stellar-Threatnet/actions/workflows/ci.yml/badge.svg)](https://github.com/smog123/Stellar-Threatnet/actions)
-[![CodeQL Security Audit](https://github.com/smog123/Stellar-Threatnet/actions/workflows/codeql.yml/badge.svg)](https://github.com/smog123/Stellar-Threatnet/actions)
+[![CI Pipeline](https://github.com/smog123/stellar-threatnet-app/actions/workflows/ci.yml/badge.svg)](https://github.com/smog123/stellar-threatnet-app/actions)
+[![CodeQL Security Audit](https://github.com/smog123/stellar-threatnet-app/actions/workflows/codeql.yml/badge.svg)](https://github.com/smog123/stellar-threatnet-app/actions)
 [![Backend Tests](https://img.shields.io/badge/tests-45%20passing-brightgreen.svg)](backend/tests/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Community](https://img.shields.io/badge/Community-Discussions-8b5cf6.svg)](https://github.com/smog123/Stellar-Threatnet/discussions)
+[![Community](https://img.shields.io/badge/Community-Discussions-8b5cf6.svg)](https://github.com/smog123/stellar-threatnet-app/discussions)
 
 # 🛡️ Stellar ThreatNet
 
 > **Open-Source Shared Security & Threat Intelligence Infrastructure for the Stellar Ecosystem.**
 
-[Live Dashboard](https://frontend-rosy-five-50.vercel.app) · [Live API Docs](https://stellar-threatnet-api.onrender.com/docs) · [GitHub Repository](https://github.com/smog123/Stellar-Threatnet)
+[Live Dashboard](https://frontend-rosy-five-50.vercel.app) · [Live API Docs](https://stellar-threatnet-api.onrender.com/docs) · [GitHub Repository](https://github.com/smog123/stellar-threatnet-app)
 
 </div>
 
@@ -213,7 +213,7 @@ stellar-threatnet-app/
 - **Python:** 3.11 or higher
 - **Node.js:** 18 or higher
 - **Docker & Docker Compose** (optional for containerized deployment)
-- **Rust & Cargo** (optional for smart contract development)
+- **Rust & Cargo** (only needed for the Soroban contract — see [stellar-threatnet-contract](https://github.com/smog123/stellar-threatnet-contract))
 
 ---
 
@@ -223,8 +223,8 @@ To spin up the entire application stack (PostgreSQL, Redis, FastAPI Backend, Cel
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/smog123/Stellar-Threatnet.git
-cd Stellar-Threatnet
+git clone https://github.com/smog123/stellar-threatnet-app.git
+cd stellar-threatnet-app
 
 # 2. Copy environment file and configure secrets
 cp .env.example .env
@@ -368,10 +368,10 @@ ThreatNet maintains strict automated test coverage across all subsystems:
 # Backend Pytest Suite (45 unit/integration tests)
 cd backend && .venv/bin/python -m pytest -q
 
-# Soroban Smart Contract Tests (3 Rust unit tests + Wasm build)
-cd contracts/soroban_threatnet
+# Soroban contract tests run in the stellar-threatnet-contract repo
+git clone https://github.com/smog123/stellar-threatnet-contract.git
+cd stellar-threatnet-contract
 cargo test
-cargo build --target wasm32v1-none --release
 
 # Frontend Type Check & ESLint
 cd frontend
@@ -402,7 +402,7 @@ We welcome contributions from security researchers, Rust/Python/TypeScript engin
 
 1. Read our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
 2. Check out beginner-friendly issues in [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md).
-3. Join community discussions on [GitHub Discussions](https://github.com/smog123/Stellar-Threatnet/discussions).
+3. Join community discussions on [GitHub Discussions](https://github.com/smog123/stellar-threatnet-app/discussions).
 
 ---
 

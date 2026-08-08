@@ -17,7 +17,7 @@ registry.
 - [ ] A `publish` event carries the indicator hash (and level/score) as topics or data
 - [ ] `publish_many` emits one event per indicator (or one batch event — state the choice)
 - [ ] Tests assert event emission with expected topics
-- [ ] `contracts/soroban_threatnet/README.md` documents the event schema
+- [ ] The contract repo `README.md` documents the event schema
 
 ## Tech Stack
 

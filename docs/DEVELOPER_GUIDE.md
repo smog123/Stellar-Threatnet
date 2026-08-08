@@ -12,7 +12,7 @@ backend/                 FastAPI service (Python 3.11+)
   app/api/v1/            routers, dependencies, endpoints
   tests/                 pytest suite (in-memory SQLite)
   alembic/               migrations
-contracts/soroban_threatnet/   Soroban Rust contract
+# (Soroban contract lives in stellar-threatnet-contract — separate repo)
 frontend/                Next.js 14 dashboard (TypeScript, Tailwind)
 cli/                     Python CLI (click + httpx)
 sdks/                    Python and TypeScript SDKs
