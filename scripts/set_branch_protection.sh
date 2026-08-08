@@ -19,12 +19,14 @@ set -euo pipefail
 REPO="${1:?Usage: $0 owner/repo \"Check 1,Check 2\"}"
 CHECKS="${2:-}"
 
+# The API requires `contexts` to be an array of plain check-run name
+# strings (not objects) — see branch-protection REST schema.
 checks_json="[]"
 if [ -n "$CHECKS" ]; then
   checks_json='['
   IFS=',' read -ra NAMES <<< "$CHECKS"
   for name in "${NAMES[@]}"; do
-    checks_json+="{\"context\":\"${name}\"},"
+    checks_json+="\"${name}\","
   done
   checks_json="${checks_json%,}]"
 fi

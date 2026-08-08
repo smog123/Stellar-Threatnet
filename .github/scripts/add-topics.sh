@@ -16,7 +16,7 @@ if ! gh auth status >/dev/null 2>&1; then
   exit 1
 fi
 
-gh repo edit --repo "$REPO" \
+gh repo edit "$REPO" \
   --add-topic stellar \
   --add-topic soroban \
   --add-topic threat-intelligence \
