@@ -10,6 +10,11 @@
 # Requires: gh CLI, authenticated with issues:write scope.     #
 # Issues are idempotent by title: if one exists, it is         #
 # skipped.                                                     #
+#                                                              #
+# NOTE: bodies are built with quoted heredocs (<<'EOF') so     #
+# markdown backticks, $, and quotes are never interpolated by  #
+# the shell. Labels must exist in the target repo (run         #
+# `gh label create` first if a label is missing).              #
 # ============================================================ #
 set -euo pipefail
 
@@ -38,11 +43,10 @@ create_issue() {
 
 # ---------------- App repo issues ----------------
 app_issues() {
-  local repo="$1"
+  local repo="$1" body
 
-  create_issue "$repo" \
-    "feat(frontend): add zero-trust on-chain indicator check panel" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 The wallet page should verify a reputation verdict against the Soroban contract directly, not only via the REST API.
 
 ## Why it matters
@@ -56,12 +60,13 @@ Zero-trust verification is a core product promise. Users should be able to confi
 - [ ] Typecheck + lint pass
 
 ## Tech Stack
-TypeScript, Next.js 14, @stellar/stellar-sdk, Web Crypto" \
-    "enhancement, good first issue"
+TypeScript, Next.js 14, @stellar/stellar-sdk, Web Crypto
+EOF
+)
+  create_issue "$repo" "feat(frontend): add zero-trust on-chain indicator check panel" "$body" "enhancement,good first issue"
 
-  create_issue "$repo" \
-    "feat(backend): add admin bulk-publish endpoint for indicator hashes" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Add an admin-only endpoint that publishes a batch of confirmed indicator hashes to the Soroban contract.
 
 ## Why it matters
@@ -75,12 +80,13 @@ Moderators approve threats in the API; the on-chain registry must stay in sync. 
 - [ ] API tests cover auth (403 for non-admin) and validation
 
 ## Tech Stack
-Python 3.11, FastAPI, SQLAlchemy 2.0, httpx, @stellar/stellar-sdk (server-side)" \
-    "enhancement, backend"
+Python 3.11, FastAPI, SQLAlchemy 2.0, httpx, @stellar/stellar-sdk (server-side)
+EOF
+)
+  create_issue "$repo" "feat(backend): add admin bulk-publish endpoint for indicator hashes" "$body" "enhancement,backend"
 
-  create_issue "$repo" \
-    "feat(sdk): add contract read helpers to Python and JS SDKs" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Expose `verify_indicator(hash_hex)` on both SDKs so downstream users can do zero-trust checks in two lines.
 
 ## Why it matters
@@ -93,12 +99,13 @@ SDKs are the primary integration surface; on-chain verification belongs in them.
 - [ ] Unit tests with a mocked RPC server; documented in both READMEs
 
 ## Tech Stack
-Python (httpx), TypeScript (ESM), @stellar/stellar-sdk" \
-    "enhancement, sdk"
+Python (httpx), TypeScript (ESM), @stellar/stellar-sdk
+EOF
+)
+  create_issue "$repo" "feat(sdk): add contract read helpers to Python and JS SDKs" "$body" "enhancement,sdk"
 
-  create_issue "$repo" \
-    "perf(frontend): add request caching to lookup pages" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Cache lookup responses client-side (SWR or equivalent) to cut redundant API calls and improve perceived latency.
 
 ## Why it matters
@@ -110,12 +117,13 @@ The SOC dashboard and extension both hit lookups repeatedly; 15-minute server ca
 - [ ] No regressions in a11y or dark/light theme
 
 ## Tech Stack
-TypeScript, Next.js 14, SWR" \
-    "enhancement, frontend, good first issue"
+TypeScript, Next.js 14, SWR
+EOF
+)
+  create_issue "$repo" "perf(frontend): add request caching to lookup pages" "$body" "enhancement,frontend,good first issue"
 
-  create_issue "$repo" \
-    "feat(cli): add threatnet verify command" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Add `threatnet verify <wallet|domain|token> <value>` that prints the API verdict and the on-chain verification result side by side.
 
 ## Why it matters
@@ -127,12 +135,13 @@ Security researchers need a scriptable way to verify indicators.
 - [ ] `--json` output for scripting; exit code 1 for confirmed_malicious
 
 ## Tech Stack
-Python, click, httpx, @stellar/stellar-sdk" \
-    "enhancement, cli"
+Python, click, httpx, @stellar/stellar-sdk
+EOF
+)
+  create_issue "$repo" "feat(cli): add threatnet verify command" "$body" "enhancement,cli"
 
-  create_issue "$repo" \
-    "docs: add threat model worked examples" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Add three fully worked scoring examples (phishing domain, wallet drainer, token impersonation) to docs/THREAT_MODEL.md with real numbers.
 
 ## Why it matters
@@ -144,12 +153,13 @@ docs/THREAT_MODEL.md explains the formula; worked examples prove it end to end a
 - [ ] Formulas match the implementation in `backend/app/services/threat_engine.py`
 
 ## Tech Stack
-Markdown" \
-    "documentation"
+Markdown
+EOF
+)
+  create_issue "$repo" "docs: add threat model worked examples" "$body" "documentation"
 
-  create_issue "$repo" \
-    "test(backend): extend ingestor tests for Horizon stream edge cases" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Add tests for the live Horizon ingestor: malformed memos, rapid-transfer detection limits, and network timeouts.
 
 ## Why it matters
@@ -161,12 +171,13 @@ The ingestor streams production ledger data; silent failures erode trust in thre
 - [ ] Coverage added to `backend/tests/test_ingestor.py`
 
 ## Tech Stack
-Python 3.11, pytest, httpx (mocked)" \
-    "test, backend"
+Python 3.11, pytest, httpx (mocked)
+EOF
+)
+  create_issue "$repo" "test(backend): extend ingestor tests for Horizon stream edge cases" "$body" "test,backend"
 
-  create_issue "$repo" \
-    "feat(extension): add token reputation badge to asset pages" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Extend the browser extension to look up `CODE:ISSUER` tokens and show a reputation badge on known asset pages.
 
 ## Why it matters
@@ -178,35 +189,37 @@ Token impersonation is one of the highest-volume scams on Stellar; the extension
 - [ ] Cache per token for 15 minutes (matches domain behavior)
 
 ## Tech Stack
-JavaScript, Manifest V3, DOM observers" \
-    "enhancement, extension"
+JavaScript, Manifest V3, DOM observers
+EOF
+)
+  create_issue "$repo" "feat(extension): add token reputation badge to asset pages" "$body" "enhancement,extension"
 }
 
 # ---------------- Contract repo issues ----------------
 contract_issues() {
-  local repo="$1"
+  local repo="$1" body
 
-  create_issue "$repo" \
-    "feat(contract): emit events on initialize and publish" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Emit `Event` payloads from `initialize` and `publish_threat_indicator` so off-chain indexers can observe changes.
 
 ## Why it matters
 SPEC.md §5 lists missing events as the top gap; indexers currently poll.
 
 ## Acceptance Criteria
-- [ ] `initialize` emits `(topic: [\"initialize\"], admin)`
-- [ ] `publish_threat_indicator` emits `(topic: [\"publish\"], publisher, hash, level, score)`
+- [ ] `initialize` emits `(topic: ["initialize"], admin)`
+- [ ] `publish_threat_indicator` emits `(topic: ["publish"], publisher, hash, level, score)`
 - [ ] Tests assert emitted events (topics + data)
 - [ ] SPEC.md and AGENT_SYSTEM_PROMPT.md updated in the same commit
 
 ## Tech Stack
-Rust, soroban-sdk 27.0.5" \
-    "enhancement, contract"
+Rust, soroban-sdk 27.0.5
+EOF
+)
+  create_issue "$repo" "feat(contract): emit events on initialize and publish" "$body" "enhancement,contract"
 
-  create_issue "$repo" \
-    "feat(contract): add persistent TTL extension maintenance call" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Add a maintenance function that extends the TTL of persistent indicator records before expiry.
 
 ## Why it matters
@@ -219,12 +232,13 @@ SPEC.md §5 flags that persistent entries are never re-extended; long-lived reco
 - [ ] Documented in SPEC.md
 
 ## Tech Stack
-Rust, soroban-sdk 27.0.5" \
-    "enhancement, contract, security"
+Rust, soroban-sdk 27.0.5
+EOF
+)
+  create_issue "$repo" "feat(contract): add persistent TTL extension maintenance call" "$body" "enhancement,contract,security"
 
-  create_issue "$repo" \
-    "feat(contract): add admin rotation function" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Add `set_admin(new_admin: Address)` gated by the current admin to allow key rotation without redeploying.
 
 ## Why it matters
@@ -237,12 +251,13 @@ SPEC.md §4 documents no rotation path; single-key admin is an operational risk.
 - [ ] Tests cover both auth paths
 
 ## Tech Stack
-Rust, soroban-sdk 27.0.5" \
-    "enhancement, contract"
+Rust, soroban-sdk 27.0.5
+EOF
+)
+  create_issue "$repo" "feat(contract): add admin rotation function" "$body" "enhancement,contract"
 
-  create_issue "$repo" \
-    "test(contract): add score boundary tests" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Add tests for reputation_score boundaries: 0, 100, 101 (must panic), and level/score consistency.
 
 ## Why it matters
@@ -254,12 +269,13 @@ The score is a security signal; boundary behavior must be locked down.
 - [ ] Coverage noted in SPEC.md
 
 ## Tech Stack
-Rust, soroban-sdk 27.0.5 (testutils)" \
-    "test, contract"
+Rust, soroban-sdk 27.0.5 (testutils)
+EOF
+)
+  create_issue "$repo" "test(contract): add score boundary tests" "$body" "test,contract"
 
-  create_issue "$repo" \
-    "chore: publish verified contract addresses" \
-    "## Summary
+  body=$(cat <<'EOF'
+## Summary
 Publish the deployed contract IDs (testnet/mainnet) and verification links in README.md and the v0.1.0 release notes.
 
 ## Why it matters
@@ -271,8 +287,10 @@ Reviewers and integrators need canonical on-chain addresses to verify.
 - [ ] Release notes reference the addresses
 
 ## Tech Stack
-Markdown, Stellar block explorer" \
-    "chore, documentation"
+Markdown, Stellar block explorer
+EOF
+)
+  create_issue "$repo" "chore: publish verified contract addresses" "$body" "chore,documentation"
 }
 
 case "${1:-}" in
