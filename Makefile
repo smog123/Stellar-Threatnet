@@ -1,4 +1,4 @@
-.PHONY: dev down backend frontend test lint contract e2e git-hooks
+.PHONY: dev down backend frontend test lint contract e2e git-hooks issues topics
 
 ## Install the repo git hooks (commit-msg + pre-commit). Run once after clone.
 git-hooks:
@@ -38,3 +38,11 @@ contract:
 ## End-to-end smoke test (backend on :8000 must be running)
 e2e:
 	PYTHONPATH=cli backend/.venv/bin/python -m stellar_threatnet_cli.cli --api-url http://localhost:8000/api/v1 stats
+
+## Create the planned GitHub issues in one run (requires gh + auth)
+issues:
+	scripts/create_issues.sh --app smog123/stellar-threatnet-app
+
+## Add discoverability topics to the GitHub repo (requires gh + auth)
+topics:
+	.github/scripts/add-topics.sh
