@@ -14,8 +14,8 @@ deployment config.
         ▼                            ▼                             ▼
 ┌────────────────┐          ┌──────────────────┐          ┌─────────────────┐
 │  Browser       │          │  Frontend        │          │  CLI / SDKs     │
-│  Extension     │          │  Next.js 14      │          │  (user side)    │
-│  (client-side) │          │  on Vercel       │          │                 │
+│  Extension     │          │  on Vercel       │          │  (user side)    │
+│  (client-side) │          │                  │          │                 │
 └────────────────┘          └────────┬─────────┘          └─────────────────┘
         │                            │ NEXT_PUBLIC_API_URL (build-time)
         │                            ▼
@@ -76,6 +76,6 @@ hardcoding URLs.
 ## Production checklist (current state)
 
 - Backend: `https://stellar-threatnet-api.onrender.com` (docs at `/docs`)
-- Frontend: `https://frontend-rosy-five-50.vercel.app`
+- Frontend: `https://stellar-threatnet.vercel.app`
 - Contract: deploy via `stellar-threatnet-contract/scripts/deploy.sh`, then set
   `SOROBAN_RPC_URL` + `THREATNET_CONTRACT_ID` in Vercel and Render env UIs.

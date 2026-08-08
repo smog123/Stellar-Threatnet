@@ -19,7 +19,7 @@ Black frame or browser home with the repo banner.
 > VO: "Stellar ThreatNet — open-source threat intelligence for the Stellar ecosystem."
 
 ## Shot 1 — Dashboard (0:04–0:15)
-Open **https://frontend-rosy-five-50.vercel.app**
+Open **https://stellar-threatnet.vercel.app**
 - Pause on the SOC header + network banner.
 - Hover (do not click) over the counters: malicious wallets, phishing domains,
   pending reports, active campaigns.
