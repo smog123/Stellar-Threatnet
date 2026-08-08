@@ -72,9 +72,13 @@ Services:
 
 ```bash
 cd contracts/soroban_threatnet
-cargo build --target wasm32-unknown-unknown --release
-# deploy with soroban-cli, then call initialize(admin)
+rustup target add wasm32v1-none
+cargo build --target wasm32v1-none --release
+# deploy with soroban-cli (scripts/deploy.sh), then call initialize(admin)
 ```
 
 The contract stores SHA-256 hashes of confirmed indicators on-ledger for
-zero-trust client verification. See `contracts/soroban_threatnet/README.md`.
+zero-trust client verification. The contract now lives in the separate
+`stellar-threatnet-contract` repository — see its `README.md` and `SPEC.md`.
+For the full hosting picture (frontend on Vercel, backend + DB on Render),
+see [docs/WAVE_TOPOLOGY.md](WAVE_TOPOLOGY.md).
