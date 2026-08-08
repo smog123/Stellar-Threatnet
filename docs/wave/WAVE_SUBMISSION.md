@@ -1,7 +1,8 @@
 # Drips Wave for Stellar — Submission Pack
 
-Status: **pre-submission**. Everything below was verified against live sources
-on the day this file was written; re-verify before submitting.
+Status: **ready to submit — all prerequisites verified live 2026-08-08**.
+The only remaining actions are user-side (record the demo video; run the
+in-app submission flow at https://www.drips.network/app).
 
 ---
 
@@ -9,7 +10,8 @@ on the day this file was written; re-verify before submitting.
 
 - **Approved list:** Stellar ThreatNet is **not** on the
   [Drips Wave for Stellar approved repos](https://www.drips.network/wave/stellar/repos)
-  list (660+ repos reviewed). Submission is open.
+  list — re-verified 2026-08-08: **667 repos approved, zero matches for
+  ThreatNet / threatnet**. Submission is open.
 - **Landscape:** approved repos cluster around escrow (Trustless Work,
   SafeTrust, KindFi), RWA (akkuea, StellarRent), and freelance marketplaces
   (OFFER-HUB). There is no shared security / threat-intelligence layer in the
@@ -73,19 +75,51 @@ Run `./scripts/create_issues.sh --app <owner>/stellar-threatnet-app` and
 
 ## 5. Supporting links checklist (gather before submitting)
 
-- [ ] Live app: https://frontend-rosy-five-50.vercel.app
-- [ ] Live API docs: https://stellar-threatnet-api.onrender.com/docs
-- [ ] App repo: https://github.com/smog123/stellar-threatnet-app
-- [ ] Contract repo: https://github.com/smog123/stellar-threatnet-contract
+- [x] Live app: https://frontend-rosy-five-50.vercel.app (HTTP 200, verified 2026-08-08)
+- [x] Live API docs: https://stellar-threatnet-api.onrender.com/docs (HTTP 200)
+- [x] Live API health: https://stellar-threatnet-api.onrender.com/health (HTTP 200, `{"status":"ok"}`)
+- [x] App repo: https://github.com/smog123/stellar-threatnet-app (HTTP 200, v0.1.0 release)
+- [x] Contract repo: https://github.com/smog123/stellar-threatnet-contract (HTTP 200, v0.1.0 release)
 - [x] On-chain contract verification links (block explorer): **testnet deployed 2026-08-08**
       — `CB34YG3ZGQ3FGK32D6GMMFKKK4SPWN5QURF4VCCQ67ZHBILJBH2KBCG5`
       (https://stellar.expert/explorer/testnet/contract/CB34YG3ZGQ3FGK32D6GMMFKKK4SPWN5QURF4VCCQ67ZHBILJBH2KBCG5),
       initialized and read-verified. Mainnet deployment pending.
-- [ ] Documentation site: docs/ pages are the primary docs; a GitBook mirror
-      is optional (Phase 11).
-- [ ] **Demo video (required):** record a 60–90s end-to-end walkthrough — submit
-      a report, moderate it, watch the score recompute, and verify the hash
-      on-chain. A submission without a working demo reads as unfinished.
+- [x] Documentation site: docs/ pages are the primary docs (the docs/ tree in
+      stellar-threatnet-app); a GitBook mirror is optional (Phase 11).
+- [ ] **Demo video (required):** record the 60–90s walkthrough following
+      `DEMO_VIDEO_SCRIPT.md` (shot list with real URLs, seeded addresses, and
+      voiceover). Script is ready; recording is the last remaining user action.
+
+## 7. How to submit (verified 2026-08-08 — user-side actions)
+
+The Stellar Wave application is an **in-app onboarding flow**, not an email or
+form. Steps (per Drips docs, `docs.drips.network/wave`):
+
+1. Sign in to **https://www.drips.network/app** with the GitHub account that
+   owns the repos (`smog123`).
+2. Navigate to **Maintainers → Orgs and Repos**.
+3. Install the **Drips Wave GitHub App** on the `smog123` account (personal
+   account — installs directly; no org needed). Grant access to both repos:
+   `stellar-threatnet-app` and `stellar-threatnet-contract`.
+4. Sync repositories, then **apply both** to the **Stellar Wave Program**.
+   Submit them separately — each is independently eligible (the playbook's
+   two-repo split maximizes surface area).
+5. Wait for program-organizer approval (in-app + email notification). If
+   declined, appeal via **Maintainers → Orgs and Repos → Appeal** (appeals by
+   email are ignored).
+
+Notes:
+- The platform evaluates public code, issue health, and activity — it does not
+  ask for a demo video or a written form. The demo video is still worth
+  recording: it is the single artifact that proves the product works end to
+  end and it is referenced in every conversation with reviewers.
+- Wave cycles run monthly (e.g. Wave 7 was Jul 23–30, $75k budget). If no
+  wave is active at submission time, apply anyway so the repos are approved
+  and ready for the next cycle; subscribe to the Drips newsletter + Discord
+  for the schedule.
+- The 13 planned issues (8 app #29–36, 5 contract #3–7) are the planned-work
+  signal for the "planned issues" description and give contributors scoped
+  entry points.
 
 ## 6. Post-approval iteration policy (Phase 13)
 
