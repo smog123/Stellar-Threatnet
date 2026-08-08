@@ -5,6 +5,14 @@ threat indicators (malicious wallet addresses, phishing domains, scam tokens)
 directly on the Stellar ledger. Clients can verify an indicator against the
 ledger without trusting the ThreatNet API — zero-trust verification.
 
+This is the **contract repository** for Stellar ThreatNet. The application
+layer (API, dashboard, SDKs, CLI, extension) lives in
+[`stellar-threatnet-app`](https://github.com/smog123/stellar-threatnet-app).
+
+The authoritative, function-by-function contract specification is in
+[`SPEC.md`](SPEC.md); the coding-agent system prompt is in
+[`AGENT_SYSTEM_PROMPT.md`](AGENT_SYSTEM_PROMPT.md).
+
 ## Why hashes?
 
 Raw wallet addresses and domains are sensitive indicators. The contract stores
