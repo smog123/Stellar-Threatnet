@@ -77,9 +77,10 @@ Run `./scripts/create_issues.sh --app <owner>/stellar-threatnet-app` and
 - [ ] Live API docs: https://stellar-threatnet-api.onrender.com/docs
 - [ ] App repo: https://github.com/smog123/stellar-threatnet-app
 - [ ] Contract repo: https://github.com/smog123/stellar-threatnet-contract
-- [ ] On-chain contract verification links (block explorer) — **pending: no
-      contract deployed to a public network yet**; deploy first via
-      `stellar-threatnet-contract/scripts/deploy.sh` and paste the IDs here.
+- [x] On-chain contract verification links (block explorer): **testnet deployed 2026-08-08**
+      — `CB34YG3ZGQ3FGK32D6GMMFKKK4SPWN5QURF4VCCQ67ZHBILJBH2KBCG5`
+      (https://stellar.expert/explorer/testnet/contract/CB34YG3ZGQ3FGK32D6GMMFKKK4SPWN5QURF4VCCQ67ZHBILJBH2KBCG5),
+      initialized and read-verified. Mainnet deployment pending.
 - [ ] Documentation site: docs/ pages are the primary docs; a GitBook mirror
       is optional (Phase 11).
 - [ ] **Demo video (required):** record a 60–90s end-to-end walkthrough — submit
