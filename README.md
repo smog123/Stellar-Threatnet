@@ -142,30 +142,6 @@ stellar-threatnet-app/
 
 ---
 
-### 💻 Local Development Options
-
-#### Option A — Docker Compose (Full Stack Local Dev)
-When running locally via `docker compose up -d --build`, services are live at:
-- **Frontend Dashboard:** [http://localhost:3000](http://localhost:3000)
-- **FastAPI OpenAPI Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
-- **PostgreSQL Database:** `localhost:5432`
-- **Redis Cache:** `localhost:6379`
-
-#### Option B — Backend Local Dev (Fastest)
-```bash
-cd backend
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-DATABASE_URL=sqlite+aiosqlite:///./dev.db CACHE_ENABLED=false uvicorn app.main:app --reload --port 8000
-```
-
-#### Option C — Frontend Dashboard
-```bash
-cd frontend && npm install && npm run dev
-```
-
----
-
 ## 📡 REST API Reference
 
 Base URL: `https://stellar-threatnet-api.onrender.com/api/v1` (or `http://localhost:8000/api/v1`)
