@@ -252,9 +252,7 @@ Stellar ThreatNet is open-source software released under the [MIT License](LICEN
 | --- | --- | --- |
 | Lead Maintainer | [@smog123](https://github.com/smog123) | [GitHub](https://github.com/smog123) |
 
-### Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=smog123/stellar-threatnet-app)](https://github.com/smog123/stellar-threatnet-app/graphs/contributors)
 
 * **Live Dashboard:** [https://stellar-threatnet.vercel.app](https://stellar-threatnet.vercel.app)
 * **Live API Docs:** [https://stellar-threatnet-api.onrender.com/docs](https://stellar-threatnet-api.onrender.com/docs)
