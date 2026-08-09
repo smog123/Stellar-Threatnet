@@ -144,7 +144,7 @@ stellar-threatnet-app/
 
 ## 📡 REST API Reference
 
-Base URL: `https://stellar-threatnet-api.onrender.com/api/v1` (or `http://localhost:8000/api/v1`)
+Base URL: `https://stellar-threatnet-api.onrender.com/api/v1`
 
 | Method | Endpoint | Auth Level | Description |
 | :--- | :--- | :--- | :--- |
