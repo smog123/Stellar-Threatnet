@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, use, useState } from "react";
 import Link from "next/link";
 import { ApiError, lookupWallet, lookupWalletOnChain, WalletLookup, WalletOnChain } from "@/lib/api";
 import ScoreGauge from "@/components/ScoreGauge";
@@ -68,8 +68,10 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function WalletLookupPage({ params }: { params: { address: string } }) {
-  const address = decodeURIComponent(params.address);
+export default function WalletLookupPage({ params }: { params: Promise<{ address: string }> }) {
+  // Next 15+ passes `params` as a Promise — unwrap it with React's `use()`.
+  const { address: rawAddress } = use(params);
+  const address = decodeURIComponent(rawAddress);
   const [data, setData] = useState<WalletLookup | null>(null);
   const [onchain, setOnchain] = useState<WalletOnChain | null>(null);
   const [status, setStatus] = useState<"loading" | "onchain" | "error" | "ok">("loading");

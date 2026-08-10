@@ -1,6 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/*
+ * Theme tokens (Tailwind v4 CSS-first config).
+ *
+ * `@theme inline` is used because the color values reference the runtime
+ * `--threat-*-rgb` variables defined below (dark default + `html.light`
+ * overrides). Inlining keeps the utilities resolving through the current
+ * theme, exactly like the old `rgb(var(--x-rgb) / <alpha-value>)` setup.
+ * Opacity modifiers (e.g. `bg-threat-accent/15`) are handled by Tailwind v4
+ * via color-mix, so no `<alpha-value>` placeholder is needed.
+ */
+@theme inline {
+  --color-threat-malicious: #f43f5e;
+  --color-threat-suspicious: #f59e0b;
+  --color-threat-investigating: #38bdf8;
+  --color-threat-trusted: #10b981;
+
+  --color-threat-bg: rgb(var(--threat-bg-rgb));
+  --color-threat-panel: rgb(var(--threat-panel-rgb));
+  --color-threat-border: rgb(var(--threat-border-rgb));
+  --color-threat-accent: rgb(var(--threat-accent-rgb));
+
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --shadow-glow: 0 0 24px rgba(34, 211, 238, 0.15);
+}
 
 :root {
   color-scheme: dark;

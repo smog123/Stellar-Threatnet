@@ -1,42 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "tn-theme";
 
-function applyTheme(light: boolean) {
-  document.documentElement.classList.toggle("light", light);
+function subscribe(cb: () => void) {
+  window.addEventListener("storage", cb);
+  return () => window.removeEventListener("storage", cb);
+}
+
+function getSnapshot(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== "dark";
+  } catch {
+    return true;
+  }
+}
+
+// Server snapshot — during hydration React re-checks the client snapshot and
+// re-renders if it differs, without emitting a hydration mismatch warning.
+function getServerSnapshot(): boolean {
+  return true;
 }
 
 export default function ThemeToggle() {
-  const [light, setLight] = useState(true);
+  const light = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const firstApply = useRef(true);
 
+  // Keep the external DOM class in sync with the store value. The first run is
+  // skipped: the layout's pre-paint script already applied the correct theme,
+  // and applying the server-snapshot value first would flash the wrong theme
+  // (e.g. flipping a dark-mode user to light for one frame after hydration).
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const isLight = stored === "light";
-        setLight(isLight);
-        applyTheme(isLight);
-      } else {
-        setLight(true);
-        applyTheme(true);
-      }
-    } catch {
-      setLight(true);
-      applyTheme(true);
+    if (firstApply.current) {
+      firstApply.current = false;
+      return;
     }
-  }, []);
+    document.documentElement.classList.toggle("light", light);
+  }, [light]);
 
   function toggle() {
     const next = !light;
-    setLight(next);
-    applyTheme(next);
     try {
       localStorage.setItem(STORAGE_KEY, next ? "light" : "dark");
     } catch {
       /* storage unavailable (private mode, etc.) — theme still applies for this session */
     }
+    // Notify the store synchronously so the UI flips immediately.
+    window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
   }
 
   return (
