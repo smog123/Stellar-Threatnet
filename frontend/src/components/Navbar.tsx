@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
+import { GITBOOK_URL } from "@/lib/site";
 
 const links = [
   { href: "/", label: "Dashboard" },
@@ -15,6 +16,7 @@ const links = [
   { href: "/advisories", label: "Security Advisories" },
   { href: "/community", label: "Community" },
   { href: "/docs", label: "API Docs" },
+  { href: GITBOOK_URL, label: "GitBook Docs", external: true },
 ];
 
 export default function Navbar() {
@@ -37,19 +39,28 @@ export default function Navbar() {
 
         <ul className="flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {links.map((link) => {
-            const active = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+            const active =
+              !link.external && (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href)));
+            const cls = `whitespace-nowrap rounded-lg px-2.5 py-2 text-[13px] font-medium transition ${
+              active
+                ? "bg-threat-accent/10 text-threat-accent"
+                : "text-slate-400 hover:bg-white/5 hover:text-white"
+            }`;
             return (
               <li key={link.href} className="shrink-0">
-                <Link
-                  href={link.href}
-                  className={`whitespace-nowrap rounded-lg px-2.5 py-2 text-[13px] font-medium transition ${
-                    active
-                      ? "bg-threat-accent/10 text-threat-accent"
-                      : "text-slate-400 hover:bg-white/5 hover:text-white"
-                  }`}
-                >
-                  {link.label}
-                </Link>
+                {link.external ? (
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" className={cls}>
+                    {link.label}
+                    <span className="ml-1 text-[10px] opacity-70" aria-hidden="true">
+                      ↗
+                    </span>
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </a>
+                ) : (
+                  <Link href={link.href} className={cls}>
+                    {link.label}
+                  </Link>
+                )}
               </li>
             );
           })}
