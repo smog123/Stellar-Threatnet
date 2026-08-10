@@ -24,7 +24,7 @@ bcrypt>=5.0.0
 slowapi>=0.1.8
 
 # --- HTTP client ---
-httpx>=0.25.0
+httpx>=0.28.1
 
 # --- Testing ---
 pytest>=7.4.3
