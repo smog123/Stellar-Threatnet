@@ -4,7 +4,10 @@ const BACKEND_ORIGIN =
 
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone",
+  // `standalone` is only needed for the Docker image; on Vercel it collides
+  // with the platform build adapter (ENOENT .next/next-server.js.nft.json on
+  // Next 16.3) — see vercel/next.js#96646.
+  output: process.env.VERCEL ? undefined : "standalone",
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
