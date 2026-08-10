@@ -15,6 +15,7 @@ const links = [
   { href: "/threat-intel", label: "Threat Intelligence" },
   { href: "/advisories", label: "Security Advisories" },
   { href: "/community", label: "Community" },
+  { href: "/moderation", label: "Moderation" },
   { href: "/docs", label: "API Docs" },
   { href: GITBOOK_URL, label: "GitBook Docs", external: true },
 ];

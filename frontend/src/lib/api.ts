@@ -339,3 +339,70 @@ export function submitReport(payload: ReportPayload, token?: string): Promise<{ 
     token,
   );
 }
+
+// ---- Moderation (moderator+ roles) ---- //
+export interface AuthUser {
+  id: string;
+  email: string;
+  full_name: string | null;
+  role: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  token_type: string;
+  user: AuthUser;
+}
+
+export async function login(email: string, password: string): Promise<LoginResponse> {
+  const body = new URLSearchParams({ username: email, password });
+  const res = await fetch(`${API_URL}/auth/token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    let detail = `HTTP ${res.status}`;
+    try {
+      const b = await res.json();
+      if (b?.detail) detail = b.detail;
+    } catch {
+      /* ignore */
+    }
+    throw new ApiError(res.status, detail);
+  }
+  return res.json() as Promise<LoginResponse>;
+}
+
+export function getModerationQueue(token: string): Promise<ReportItem[]> {
+  return request("/reports/queue", { cache: "no-store" }, token);
+}
+
+export function moderateReport(
+  reportId: string,
+  action: "approve" | "reject",
+  token: string,
+  opts: { moderation_note?: string; proof_type?: string; confidence?: number } = {},
+): Promise<ReportItem> {
+  return request(
+    `/reports/${reportId}/moderate`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, ...opts }),
+    },
+    token,
+  );
+}
+
+export const PROOF_TYPES: { value: string; weight: number; hint: string }[] = [
+  { value: "onchain_proof", weight: 50, hint: "On-ledger trace / contract audit" },
+  { value: "payload_sample", weight: 40, hint: "Captured phishing payload" },
+  { value: "tx_hash", weight: 30, hint: "Specific transaction" },
+  { value: "domain_screenshot", weight: 25, hint: "Screenshot of the claim page" },
+  { value: "multi_source", weight: 20, hint: "Several independent sources" },
+  { value: "other", weight: 15, hint: "Does not fit the types above" },
+];
