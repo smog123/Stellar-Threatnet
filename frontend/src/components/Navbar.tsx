@@ -26,7 +26,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-threat-border/70 bg-threat-bg/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex shrink-0 items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-threat-accent to-cyan-600 font-mono text-sm font-bold text-slate-950 shadow-glow">
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-linear-to-br from-threat-accent to-cyan-600 font-mono text-sm font-bold text-slate-950 shadow-glow">
             TN
           </span>
           <span className="hidden flex-col leading-tight sm:flex">

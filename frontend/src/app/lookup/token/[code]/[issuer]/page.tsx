@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, use, useState } from "react";
 import Link from "next/link";
 import { ApiError, lookupToken, TokenLookup } from "@/lib/api";
 import ScoreGauge from "@/components/ScoreGauge";
 import StatusBadge from "@/components/StatusBadge";
 
-export default function TokenLookupPage({ params }: { params: { code: string; issuer: string } }) {
-  const code = decodeURIComponent(params.code);
-  const issuer = decodeURIComponent(params.issuer);
+export default function TokenLookupPage({ params }: { params: Promise<{ code: string; issuer: string }> }) {
+  // Next 15+ passes `params` as a Promise — unwrap it with React's `use()`.
+  const { code: rawCode, issuer: rawIssuer } = use(params);
+  const code = decodeURIComponent(rawCode);
+  const issuer = decodeURIComponent(rawIssuer);
   const [data, setData] = useState<TokenLookup | null>(null);
   const [status, setStatus] = useState<"loading" | "notfound" | "error" | "ok">("loading");
   const [message, setMessage] = useState("");

@@ -15,9 +15,9 @@ export default function IncidentsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setError(null);
     getIncidents(status || undefined, 10, offset)
       .then((page) => {
+        setError(null);
         setItems(page.items);
         setTotal(page.total);
       })

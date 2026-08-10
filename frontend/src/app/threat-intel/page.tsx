@@ -31,12 +31,14 @@ export default function ThreatIntelPage() {
     });
   }
 
+  // Empty-query state is derived, not stored, so no synchronous setState is
+  // needed when the query is cleared (react-hooks/set-state-in-effect).
+  const hasQuery = query.trim().length > 0;
+  const shownResults = hasQuery ? results : [];
+  const shownTotal = hasQuery ? total : 0;
+
   useEffect(() => {
-    if (!query.trim()) {
-      setResults([]);
-      setTotal(0);
-      return;
-    }
+    if (!query.trim()) return;
     const type = filters.size ? Array.from(filters).join(",") : undefined;
     const timer = setTimeout(() => {
       search(query.trim(), type, 50)
@@ -100,18 +102,18 @@ export default function ThreatIntelPage() {
       {error ? <div className="panel border-rose-500/40 p-4 text-sm text-rose-400">{error}</div> : null}
 
       <section className="panel p-5">
-        {!searched && results.length === 0 ? (
-          <p className="py-8 text-center text-sm text-slate-500">
-            Type a query above to search wallets, domains, tokens, and incidents.
-          </p>
-        ) : (
-          <>
-            <p className="mb-3 text-xs text-slate-500">{total} result{total === 1 ? "" : "s"}</p>
-            {results.length === 0 ? (
-              <p className="py-8 text-center text-sm text-slate-500">No matches — the entity may be untracked (neutral, not trusted).</p>
-            ) : (
-              <ul className="divide-y divide-threat-border/60">
-                {results.map((r, i) => (
+      {!hasQuery || (!searched && shownResults.length === 0) ? (
+        <p className="py-8 text-center text-sm text-slate-500">
+          Type a query above to search wallets, domains, tokens, and incidents.
+        </p>
+      ) : (
+        <>
+          <p className="mb-3 text-xs text-slate-500">{shownTotal} result{shownTotal === 1 ? "" : "s"}</p>
+          {shownResults.length === 0 ? (
+            <p className="py-8 text-center text-sm text-slate-500">No matches — the entity may be untracked (neutral, not trusted).</p>
+          ) : (
+            <ul className="divide-y divide-threat-border/60">
+              {shownResults.map((r, i) => (
                   <li key={`${r.entity_type}-${r.identifier}-${i}`} className="flex items-center gap-3 py-3">
                     <span className="text-lg">{entityIcon(r.entity_type)}</span>
                     <div className="min-w-0 flex-1">

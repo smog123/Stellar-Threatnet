@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, use, useState } from "react";
 import Link from "next/link";
 import { ApiError, DomainLookup, lookupDomain } from "@/lib/api";
 import ScoreGauge from "@/components/ScoreGauge";
 import StatusBadge from "@/components/StatusBadge";
 
-export default function DomainLookupPage({ params }: { params: { domain: string } }) {
-  const domain = decodeURIComponent(params.domain);
+export default function DomainLookupPage({ params }: { params: Promise<{ domain: string }> }) {
+  // Next 15+ passes `params` as a Promise — unwrap it with React's `use()`.
+  const { domain: rawDomain } = use(params);
+  const domain = decodeURIComponent(rawDomain);
   const [data, setData] = useState<DomainLookup | null>(null);
   const [status, setStatus] = useState<"loading" | "notfound" | "error" | "ok">("loading");
   const [message, setMessage] = useState("");

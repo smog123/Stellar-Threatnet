@@ -14,9 +14,9 @@ export default function AdvisoriesPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setError(null);
     getIncidents(status || undefined, 25, 0)
       .then((page) => {
+        setError(null);
         setItems(page.items);
         setTotal(page.total);
       })
