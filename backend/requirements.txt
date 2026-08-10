@@ -14,7 +14,7 @@ celery>=5.3.4
 
 # --- Validation & settings ---
 pydantic[email]>=2.13.4
-pydantic-settings>=2.0.3
+pydantic-settings>=2.15.0
 
 # --- Auth ---
 python-jose[cryptography]>=3.5.0
