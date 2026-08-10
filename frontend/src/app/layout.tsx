@@ -8,8 +8,8 @@ export const metadata: Metadata = {
     "The open threat intelligence platform for the Stellar ecosystem: wallet, domain and token reputation, incidents, and community reports.",
 };
 
-// Apply the stored/system theme before first paint to avoid a flash of the wrong theme.
-const themeInitScript = `(function(){try{var s=localStorage.getItem("tn-theme");var light=s? s==="light" : window.matchMedia("(prefers-color-scheme: light)").matches;document.documentElement.classList.toggle("light", light);}catch(e){}})();`;
+// Apply the stored theme before first paint (defaults to light mode).
+const themeInitScript = `(function(){try{var s=localStorage.getItem("tn-theme");var light=s ? s==="light" : true;document.documentElement.classList.toggle("light", light);}catch(e){document.documentElement.classList.add("light");}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

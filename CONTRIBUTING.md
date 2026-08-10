@@ -41,8 +41,12 @@ npm run dev
 
 ### Soroban contract (Rust)
 
+The contract lives in its own repository:
+[stellar-threatnet-contract](https://github.com/smog123/stellar-threatnet-contract).
+
 ```bash
-cd contracts/soroban_threatnet
+git clone https://github.com/smog123/stellar-threatnet-contract.git
+cd stellar-threatnet-contract
 cargo test
 ```
 

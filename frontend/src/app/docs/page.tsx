@@ -1,4 +1,5 @@
 import { API_URL } from "@/lib/api";
+import { GITBOOK_URL } from "@/lib/site";
 
 const ENDPOINTS = [
   { method: "GET", path: "/lookup/wallet/{address}", auth: "public", desc: "Wallet reputation score and category" },
@@ -25,7 +26,15 @@ export default function DocsPage() {
         <h1 className="text-2xl font-bold tracking-tight text-white">API Documentation</h1>
         <p className="mt-1.5 text-sm text-slate-400">
           Base URL: <span className="mono text-threat-accent">{API_URL}</span> · Interactive docs at{" "}
-          <span className="mono text-threat-accent">/docs</span> (Swagger UI)
+          <span className="mono text-threat-accent">/docs</span> (Swagger UI) · Full guides on{" "}
+          <a
+            href={GITBOOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-threat-accent underline-offset-2 transition hover:underline"
+          >
+            GitBook ↗
+          </a>
         </p>
       </section>
 

@@ -9,10 +9,23 @@ function applyTheme(light: boolean) {
 }
 
 export default function ThemeToggle() {
-  const [light, setLight] = useState(false);
+  const [light, setLight] = useState(true);
 
   useEffect(() => {
-    setLight(document.documentElement.classList.contains("light"));
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const isLight = stored === "light";
+        setLight(isLight);
+        applyTheme(isLight);
+      } else {
+        setLight(true);
+        applyTheme(true);
+      }
+    } catch {
+      setLight(true);
+      applyTheme(true);
+    }
   }, []);
 
   function toggle() {
