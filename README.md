@@ -227,6 +227,20 @@ console.log(stats);
 
 ---
 
+## 📚 Documentation
+
+| Doc | Covers |
+| --- | --- |
+| [THREAT_MODEL.md](docs/THREAT_MODEL.md) | Scoring formula, status bands, and worked examples |
+| [USER_GUIDES.md](docs/USER_GUIDES.md) | Guides for reporters, moderators, and integrators |
+| [API.md](docs/API.md) | REST API reference, auth, roles, rate limits |
+| [DEVELOPER_GUIDE.md](docs/DEVELOPER_GUIDE.md) | Local setup, architecture, contribution flow |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and data flow |
+| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Environment variables and deployment |
+| [GOVERNANCE.md](docs/GOVERNANCE.md) | Indicator-database governance model |
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions from security researchers, Rust/Python/TypeScript engineers, and documentation writers!
