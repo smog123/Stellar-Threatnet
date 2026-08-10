@@ -21,7 +21,7 @@ python-jose[cryptography]>=3.5.0
 bcrypt>=5.0.0
 
 # --- Rate limiting ---
-slowapi>=0.1.8
+slowapi>=0.1.10
 
 # --- HTTP client ---
 httpx>=0.25.0
