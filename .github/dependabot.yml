@@ -18,13 +18,9 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 5
 
-  - package-ecosystem: "cargo"
-    directory: "/contracts/soroban_threatnet"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+
+  # The Soroban contract is managed in the separate stellar-threatnet-contract repo.

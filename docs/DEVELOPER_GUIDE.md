@@ -12,7 +12,7 @@ backend/                 FastAPI service (Python 3.11+)
   app/api/v1/            routers, dependencies, endpoints
   tests/                 pytest suite (in-memory SQLite)
   alembic/               migrations
-contracts/soroban_threatnet/   Soroban Rust contract
+# (Soroban contract lives in stellar-threatnet-contract — separate repo)
 frontend/                Next.js 14 dashboard (TypeScript, Tailwind)
 cli/                     Python CLI (click + httpx)
 sdks/                    Python and TypeScript SDKs
@@ -71,8 +71,10 @@ default and fetch via the API client.
 
 ## Soroban contract
 
-`#![no_std]`, `soroban-sdk 20`. Key design point: only **hashes** of indicators
-are stored on-ledger; raw intelligence stays off-chain in the API database.
+`#![no_std]`, `soroban-sdk 27.0.5`, wasm target `wasm32v1-none`. Key design
+point: only **hashes** of indicators are stored on-ledger; raw intelligence
+stays off-chain in the API database. The contract lives in the separate
+`stellar-threatnet-contract` repository (this repo links to it).
 
 ## Conventions
 

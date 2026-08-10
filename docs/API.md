@@ -1,6 +1,6 @@
 # ThreatNet REST API
 
-Base URL: `http://localhost:8000/api/v1` (production: `https://api.stellar-threatnet.org/api/v1`)
+Base URL: `http://localhost:8000/api/v1` (production: `https://stellar-threatnet-api.onrender.com/api/v1`)
 
 Interactive docs: `GET /docs` (Swagger UI) and `GET /redoc`.
 

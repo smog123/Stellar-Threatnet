@@ -22,9 +22,37 @@ def _rate_limit_exceeded_handler(request, exc):
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    # Dev convenience: create missing tables. Production: run `alembic upgrade head`.
+    # Create missing tables and seed data if empty
     await init_db()
+    try:
+        from app.db.session import AsyncSessionLocal
+        from sqlalchemy import select
+        from app.models.entities import WalletReputation
+        from scripts.seed import seed_all
+        async with AsyncSessionLocal() as db:
+            count = (await db.execute(select(WalletReputation).limit(1))).scalar_one_or_none()
+            if count is None:
+                print("Seeding database automatically on startup...")
+                await seed_all(db)
+    except Exception as e:
+        print(f"Startup seeding notice: {e}")
+
+    # Launch the live Horizon ingestor (opt-in via INGESTOR_ENABLED).
+    if settings.INGESTOR_ENABLED:
+        try:
+            from app.services.ingestor import start_ingestor
+            await start_ingestor()
+        except Exception as e:
+            print(f"Ingestor startup notice: {e}")
+
     yield
+
+    if settings.INGESTOR_ENABLED:
+        try:
+            from app.services.ingestor import stop_ingestor
+            await stop_ingestor()
+        except Exception as e:
+            print(f"Ingestor shutdown notice: {e}")
 
 
 app = FastAPI(
