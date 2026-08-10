@@ -1,10 +1,10 @@
 # --- Core API ---
 fastapi>=0.104.0
 uvicorn[standard]>=0.23.2
-python-multipart>=0.0.6
+python-multipart>=0.0.32
 
 # --- Database ---
-sqlalchemy[asyncio]>=2.0.22
+sqlalchemy[asyncio]>=2.0.51
 asyncpg>=0.28.0
 alembic>=1.12.0
 
@@ -13,20 +13,20 @@ redis>=5.0.1
 celery>=5.3.4
 
 # --- Validation & settings ---
-pydantic[email]>=2.4.2
+pydantic[email]>=2.13.4
 pydantic-settings>=2.0.3
 
 # --- Auth ---
-python-jose[cryptography]>=3.3.0
-bcrypt>=4.0.1
+python-jose[cryptography]>=3.5.0
+bcrypt>=5.0.0
 
 # --- Rate limiting ---
-slowapi>=0.1.8
+slowapi>=0.1.10
 
 # --- HTTP client ---
-httpx>=0.25.0
+httpx>=0.28.1
 
 # --- Testing ---
 pytest>=7.4.3
 pytest-asyncio>=0.21.1
-aiosqlite>=0.19.0
+aiosqlite>=0.22.1

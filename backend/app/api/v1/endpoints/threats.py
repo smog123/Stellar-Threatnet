@@ -31,7 +31,9 @@ from app.schemas.threats import (
     TokenLookupResponse,
     VoteRequest,
     WalletLookupResponse,
+    WalletOnChainResponse,
 )
+from app.services.horizon import fetch_account_profile
 from app.services.threat_engine import ThreatService
 
 router = APIRouter()
@@ -71,6 +73,21 @@ async def lookup_wallet(request: Request, address: str, db: AsyncSession = Depen
     if result is None:
         raise HTTPException(status_code=404, detail="No threat data found for this address")
     return result
+
+
+@router.get(
+    "/lookup/wallet/{address}/onchain",
+    response_model=WalletOnChainResponse,
+    summary="Live on-chain wallet profile",
+)
+@limiter.limit("60/minute")
+async def lookup_wallet_onchain(request: Request, address: str):
+    """Fallback for wallets not in the threat DB: fetch live account from Stellar
+    Horizon and derive a soft heuristic verdict from age/activity/home_domain/multisig.
+    This is context, not a safety guarantee (see docs/THREAT_MODEL.md).
+    """
+    address = _validated_address(address)
+    return await fetch_account_profile(address)
 
 
 @router.get(

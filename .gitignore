@@ -10,6 +10,9 @@ htmlcov/
 dist/
 build/
 
+# Local SQLite dev database
+*.db
+
 # Node
 node_modules/
 .next/
