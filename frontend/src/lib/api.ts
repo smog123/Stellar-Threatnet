@@ -1,4 +1,8 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
+// Treat empty-string env as unset: `??` only falls back on null/undefined,
+// and an empty NEXT_PUBLIC_API_URL silently produced API_URL = "" which made
+// every request hit the app origin (404 -> mock fallback) instead of the API.
+const configuredApiUrl = (process.env.NEXT_PUBLIC_API_URL ?? "").trim();
+export const API_URL = configuredApiUrl || "http://localhost:8000/api/v1";
 
 export interface GlobalStats {
   total_malicious_wallets: number;
