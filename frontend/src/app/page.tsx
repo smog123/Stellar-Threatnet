@@ -18,9 +18,24 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getSocOverview()
-      .then(setData)
-      .catch((err) => setError(err instanceof Error ? err.message : "API unreachable — start the backend on :8000"));
+    // Self-refreshing dashboard: fetch on mount, then poll so the SOC view
+    // stays live without manual page reloads.
+    let cancelled = false;
+    const load = () =>
+      getSocOverview()
+        .then((d) => {
+          if (!cancelled) setData(d);
+        })
+        .catch((err) => {
+          if (!cancelled)
+            setError(err instanceof Error ? err.message : "API unreachable — start the backend on :8000");
+        });
+    load();
+    const id = setInterval(load, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
   }, []);
 
   if (error && !data) {
