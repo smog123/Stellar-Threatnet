@@ -157,6 +157,7 @@ class CommunityReport(Base):
 
     reporter = relationship("User", back_populates="reports", foreign_keys=[reporter_id])
     moderator = relationship("User", back_populates="moderated_reports", foreign_keys=[moderator_id])
+    votes = relationship("Vote", back_populates="report", cascade="all, delete-orphan")
 
 
 class Evidence(Base):
@@ -204,6 +205,8 @@ class Vote(Base):
     voter_id = Column(String, ForeignKey("users.id"), nullable=False)
     is_up = Column(Boolean, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    report = relationship("CommunityReport", back_populates="votes")
 
 
 class AuditLog(Base):
