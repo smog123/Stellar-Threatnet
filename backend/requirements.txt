@@ -5,7 +5,7 @@ python-multipart>=0.0.32
 
 # --- Database ---
 sqlalchemy[asyncio]>=2.0.51
-asyncpg>=0.28.0
+asyncpg>=0.31.0
 alembic>=1.19.0
 
 # --- Cache & workers ---
