@@ -9,7 +9,7 @@ asyncpg>=0.28.0
 alembic>=1.19.0
 
 # --- Cache & workers ---
-redis>=5.0.1
+redis>=8.1.0
 celery>=5.3.4
 
 # --- Validation & settings ---
