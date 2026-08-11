@@ -10,7 +10,7 @@ alembic>=1.19.0
 
 # --- Cache & workers ---
 redis>=5.0.1
-celery>=5.3.4
+celery>=5.6.3
 
 # --- Validation & settings ---
 pydantic[email]>=2.13.4
