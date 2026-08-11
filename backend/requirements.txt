@@ -27,6 +27,6 @@ slowapi>=0.1.10
 httpx>=0.28.1
 
 # --- Testing ---
-pytest>=7.4.3
+pytest>=9.1.1
 pytest-asyncio>=0.21.1
 aiosqlite>=0.22.1
