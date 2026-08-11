@@ -28,5 +28,5 @@ httpx>=0.28.1
 
 # --- Testing ---
 pytest>=7.4.3
-pytest-asyncio>=0.21.1
+pytest-asyncio>=1.4.0
 aiosqlite>=0.22.1
